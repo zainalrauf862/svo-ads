@@ -21,15 +21,14 @@ PERIODS = {"harian": "today", "mingguan": "last_7d", "bulanan": "this_month"}
 FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values"
 
 # Pemetaan action_type Meta -> tahap funnel (best-effort; dikalibrasi dari _debug_actions.json)
+# Prioritas: ambil action_type PERTAMA yang cocok (bukan dijumlah) -> hindari dobel antar-alias
 MAP = {
-    "viewlp":   ["landing_page_view"],
-    "klikwa":   ["onsite_conversion.messaging_first_reply", "click_to_whatsapp",
-                 "onsite_conversion.messaging_user_depth_2_message_send"],
+    "viewlp":   ["landing_page_view", "omni_landing_page_view"],
+    "klikwa":   ["click_to_whatsapp", "onsite_conversion.messaging_first_reply"],
     "contact":  ["onsite_conversion.messaging_conversation_started_7d",
-                 "onsite_conversion.lead_grouped", "lead",
-                 "onsite_conversion.total_messaging_connection"],
+                 "onsite_conversion.lead_grouped", "lead"],
     "purchase": ["purchase", "omni_purchase",
-                 "offsite_conversion.fb_pixel_purchase", "onsite_conversion.purchase"],
+                 "offsite_conversion.fb_pixel_purchase", "onsite_web_purchase"],
 }
 _seen = set()
 
@@ -49,34 +48,29 @@ def fnum(x, d=0.0):
         return d
 
 
-def actsum(actions, keys):
-    if not actions:
+def actval(items, keys):
+    """Ambil nilai dari action_type PERTAMA (urut prioritas) yang ada — hindari dobel-hitung
+    ketika Meta melaporkan 1 konversi yang sama di beberapa alias (purchase/omni_purchase/dst)."""
+    if not items:
         return 0
-    tot = 0.0
-    for a in actions:
+    idx = {}
+    for a in items:
         t = a.get("action_type")
         if t:
             _seen.add(t)
-        if t in keys:
-            tot += fnum(a.get("value"))
-    return int(round(tot))
-
-
-def valsum(vals, keys):
-    if not vals:
-        return 0
-    tot = 0.0
-    for a in vals:
-        if a.get("action_type") in keys:
-            tot += fnum(a.get("value"))
-    return int(round(tot))
+            if t not in idx:
+                idx[t] = a
+    for k in keys:
+        if k in idx:
+            return int(round(fnum(idx[k].get("value"))))
+    return 0
 
 
 def metrics(row):
     a = row.get("actions"); av = row.get("action_values")
     spend = fnum(row.get("spend"))
-    order = actsum(a, MAP["purchase"])
-    value = valsum(av, MAP["purchase"])
+    order = actval(a, MAP["purchase"])
+    value = actval(av, MAP["purchase"])
     return {
         "spend": int(round(spend)),
         "impresi": int(fnum(row.get("impressions"))),
@@ -85,9 +79,9 @@ def metrics(row):
         "klik": int(fnum(row.get("inline_link_clicks"))),
         "ctr": round(fnum(row.get("ctr")), 2),
         "cpc": int(round(fnum(row.get("cpc")))),
-        "viewlp": actsum(a, MAP["viewlp"]),
-        "klikwa": actsum(a, MAP["klikwa"]),
-        "contact": actsum(a, MAP["contact"]),
+        "viewlp": actval(a, MAP["viewlp"]),
+        "klikwa": actval(a, MAP["klikwa"]),
+        "contact": actval(a, MAP["contact"]),
         "order": order,
         "value": value,
         "roas": round(value / spend, 2) if spend else 0,
