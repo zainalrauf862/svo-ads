@@ -107,37 +107,20 @@
   function der(m){m=m||{};var o={};for(var k in m)o[k]=m[k];o.spend=o.spend||0;o.contact=o.contact||0;o.value=o.value||0;o.cc=o.contact?o.spend/o.contact:0;o.roas=(o.roas!=null)?o.roas:(o.spend?o.value/o.spend:0);return o;}
   function kpi(a,l,v,s){return '<div class="kpi" style="--accent:'+a+'"><div class="lbl">'+l+'</div><div class="val">'+v+'</div><div class="sub">'+s+'</div></div>';}
 
-  // Deteksi jenis funnel akun: 'wa' (chat) atau 'web' (jualan checkout)
-  function accType(a){
-    var wa=0,web=0;
-    ['harian','mingguan','bulanan'].forEach(function(k){var m=(a.periods||{})[k]||{};wa+=(m.klikwa||0)+(m.contact||0);web+=(m.viewcontent||0)+(m.addtocart||0)+(m.checkout||0);});
-    if(wa) return 'wa';
-    if(web) return 'web';
-    return 'wa';
-  }
-  function funnel(m,type){
+  function funnel(m){
     var freq=m.reach?(m.impresi/m.reach):(m.frekuensi||0),cpc=m.klik?m.spend/m.klik:0;
     var rows=[
       ['💰','Spend',rp(m.spend),''],
       ['👁️','Impresi',num(m.impresi),''],
       ['📢','Reach',num(m.reach),'frekuensi '+dec(freq,2)],
       ['🔗','Klik Tautan',num(m.klik),pct(m.klik,m.impresi)+' dari impresi · CPC '+rp(cpc)],
-      ['📄','View LP',num(m.viewlp),pct(m.viewlp,m.klik)+' dari klik']
+      ['📄','View LP',num(m.viewlp),pct(m.viewlp,m.klik)+' dari klik'],
+      ['📲','Klik WA',num(m.klikwa),pct(m.klikwa,m.viewlp)+' dari View LP'],
+      ['💬','Contact',num(m.contact),pct(m.contact,m.klikwa)+' dari Klik WA'],
+      ['🧾','Cost/Contact',m.contact?rp(m.spend/m.contact):'—',''],
+      ['🛒','Purchase',num(m.order)+' order · '+rp(m.value),pct(m.order,m.contact)+' dari contact'],
+      ['📈','ROAS',dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span>','']
     ];
-    var prevLbl,prevVal;
-    if(type==='web'){
-      rows.push(['👀','View Content',num(m.viewcontent),pct(m.viewcontent,m.viewlp)+' dari View LP']);
-      rows.push(['🛒','Add to Cart',num(m.addtocart),pct(m.addtocart,m.viewcontent)+' dari View Content']);
-      rows.push(['💳','Checkout',num(m.checkout),pct(m.checkout,m.addtocart)+' dari Add to Cart']);
-      prevLbl='Checkout';prevVal=m.checkout;
-    } else {
-      rows.push(['📲','Klik WA',num(m.klikwa),pct(m.klikwa,m.viewlp)+' dari View LP']);
-      rows.push(['💬','Contact',num(m.contact),pct(m.contact,m.klikwa)+' dari Klik WA']);
-      rows.push(['🧾','Cost/Contact',m.contact?rp(m.spend/m.contact):'—','']);
-      prevLbl='Contact';prevVal=m.contact;
-    }
-    rows.push(['✅','Purchase',num(m.order)+' order · '+rp(m.value),pct(m.order,prevVal)+' dari '+prevLbl]);
-    rows.push(['📈','ROAS',dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span>','']);
     return '<div class="funnel">'+rows.map(function(r){var s=r[3]?'<small>'+r[3]+'</small>':'';return '<div class="frow"><span class="k"><span class="em">'+r[0]+'</span>'+r[1]+'</span><span class="v">'+r[2]+s+'</span></div>';}).join('')+'</div>';
   }
 
@@ -160,25 +143,18 @@
         '<span class="metablk"><span class="nm">'+a.se+'<span class="sub">'+desub+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Spend</span><span class="hv">'+rpC(m.spend)+'</span></span>'+
         '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
-        '<span class="caret">▼</span></button><div class="se-body">'+funnel(m,accType(a))+'</div></div>';
+        '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
     }).join('');
     return '<div class="view-head"><h2>Report '+key.charAt(0).toUpperCase()+key.slice(1)+'</h2><p>'+sub+'</p></div>'+kpis+'<div class="se-list">'+items+'</div>';
   }
 
-  function campRow(c,type){
-    var m=der(c),on=c.on!==false,ctr=m.impresi?(m.klik/m.impresi*100):0,cpc=m.klik?m.spend/m.klik:0,roas=m.spend?m.value/m.spend:0;
-    var mid;
-    if(type==='web'){
-      mid='<td class="num">'+num(m.viewcontent)+'</td><td class="num">'+num(m.addtocart)+'</td><td class="num">'+num(m.checkout)+'</td>';
-    } else {
-      var cc=m.contact?m.spend/m.contact:0;
-      mid='<td class="num">'+num(m.klikwa)+'</td><td class="num'+(m.contact&&on?' pos':'')+'">'+num(m.contact)+'</td><td class="num">'+(m.contact?rp(cc):'—')+'</td>';
-    }
+  function campRow(c){
+    var m=der(c),on=c.on!==false,ctr=m.impresi?(m.klik/m.impresi*100):0,cpc=m.klik?m.spend/m.klik:0,cc=m.contact?m.spend/m.contact:0,roas=(m.roas!=null&&m.roas)?m.roas:(m.spend?m.value/m.spend:0);
     return '<tr class="'+(on?'':'camp-off')+'"><td class="nmc">'+(c.name||'')+(on?'':' (Off)')+'</td>'+
       '<td class="num">'+rp(m.spend)+'</td><td class="num">'+num(m.impresi)+'</td><td class="num">'+num(m.klik)+'</td>'+
       '<td class="num">'+dec(ctr,1)+'%</td><td class="num">'+rp(cpc)+'</td><td class="num">'+num(m.viewlp)+'</td>'+
-      mid+
-      '<td class="num'+(m.order&&on?' pos':'')+'">'+num(m.order)+'</td>'+
+      '<td class="num">'+num(m.klikwa)+'</td><td class="num'+(m.contact&&on?' pos':'')+'">'+num(m.contact)+'</td>'+
+      '<td class="num">'+(m.contact?rp(cc):'—')+'</td><td class="num'+(m.order&&on?' pos':'')+'">'+num(m.order)+'</td>'+
       '<td class="num'+(m.order&&on?' pos':'')+'">'+(m.order?dec(roas,2)+'×':'—')+'</td></tr>';
   }
   function renderCamp(){
@@ -195,18 +171,14 @@
       kpi('var(--warn)','Terbanyak',most?most.cs.length+'<small> campaign</small>':'—',most?'oleh '+most.a.se:'')+'</div>';
     if(!groups.length) return head+kpis+'<div class="state"><h4>Belum ada campaign aktif hari ini</h4><p>Belum ada campaign yang spend atau aktif hari ini di akun mana pun.</p></div>';
     var items=groups.map(function(g,i){
-      var type=accType(g.a);
-      var rows=g.cs.map(function(c){return campRow(c,type);}).join('');
-      var midHead=type==='web'
-        ?'<th class="r">View Content</th><th class="r">Add to Cart</th><th class="r">Checkout</th>'
-        :'<th class="r">Klik WA</th><th class="r">Contact</th><th class="r">Cost/Ctc</th>';
+      var rows=g.cs.map(campRow).join('');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
         '<span class="metablk"><span class="nm">'+g.a.se+'<span class="sub">DE '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
         '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
         '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+
-        '<thead><tr><th>Campaign</th><th class="r">Spend</th><th class="r">Impresi</th><th class="r">Klik Link</th><th class="r">CTR</th><th class="r">CPC</th><th class="r">View LP</th>'+midHead+'<th class="r">Purchase</th><th class="r">ROAS</th></tr></thead>'+
+        '<thead><tr><th>Campaign</th><th class="r">Spend</th><th class="r">Impresi</th><th class="r">Klik Link</th><th class="r">CTR</th><th class="r">CPC</th><th class="r">View LP</th><th class="r">Klik WA</th><th class="r">Contact</th><th class="r">Cost/Ctc</th><th class="r">Purchase</th><th class="r">ROAS</th></tr></thead>'+
         '<tbody>'+rows+'</tbody></table></div></div></div>';
     }).join('');
     return head+kpis+'<div class="se-list">'+items+'</div>';

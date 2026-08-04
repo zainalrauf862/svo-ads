@@ -18,25 +18,17 @@ except Exception:
     ACC = {}
 
 PERIODS = {"harian": "today", "mingguan": "last_7d", "bulanan": "this_month"}
-FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values"
+FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values,purchase_roas"
 
 # Pemetaan action_type Meta -> tahap funnel (best-effort; dikalibrasi dari _debug_actions.json)
-# Prioritas: ambil action_type PERTAMA yang cocok (bukan dijumlah) -> hindari dobel antar-alias
+# Pemetaan event Meta -> funnel, SAMA dengan pull_novia.py (ambil action_type PERTAMA yg cocok)
+# Catatan: "Klik WA" = Add to Cart; "Contact" = event custom pixel Novia.
 MAP = {
     "viewlp":   ["landing_page_view", "omni_landing_page_view"],
-    "klikwa":   ["click_to_whatsapp", "onsite_conversion.messaging_first_reply"],
-    "contact":  ["onsite_conversion.messaging_conversation_started_7d",
-                 "onsite_conversion.lead_grouped", "lead"],
-    "purchase": ["purchase", "omni_purchase",
-                 "offsite_conversion.fb_pixel_purchase", "onsite_web_purchase"],
-    # funnel jualan web
-    "viewcontent": ["view_content", "omni_view_content",
-                    "offsite_conversion.fb_pixel_view_content", "onsite_web_view_content"],
-    "addtocart":   ["add_to_cart", "omni_add_to_cart",
-                    "offsite_conversion.fb_pixel_add_to_cart", "onsite_web_add_to_cart"],
-    "checkout":    ["initiate_checkout", "omni_initiated_checkout", "add_payment_info",
-                    "offsite_conversion.fb_pixel_initiate_checkout",
-                    "offsite_conversion.fb_pixel_add_payment_info"],
+    "klikwa":   ["add_to_cart", "offsite_conversion.fb_pixel_add_to_cart", "onsite_web_add_to_cart"],
+    "contact":  ["contact", "contact_total",
+                 "offsite_conversion.fb_pixel_contact", "offsite_conversion.fb_pixel_custom"],
+    "purchase": ["omni_purchase", "purchase", "offsite_conversion.fb_pixel_purchase"],
 }
 _seen = set()
 
@@ -74,28 +66,44 @@ def actval(items, keys):
     return 0
 
 
+def actvalf(items, keys):
+    """Sama seperti actval tapi kembalikan float (untuk ROAS dari purchase_roas)."""
+    if not items:
+        return 0.0
+    idx = {}
+    for a in items:
+        t = a.get("action_type")
+        if t and t not in idx:
+            idx[t] = a
+    for k in keys:
+        if k in idx:
+            return fnum(idx[k].get("value"))
+    return 0.0
+
+
 def metrics(row):
     a = row.get("actions"); av = row.get("action_values")
     spend = fnum(row.get("spend"))
     order = actval(a, MAP["purchase"])
     value = actval(av, MAP["purchase"])
+    klik = int(fnum(row.get("inline_link_clicks"))) or actval(a, ["link_click"])
+    roas = round(actvalf(row.get("purchase_roas"), MAP["purchase"]), 2)
+    if not roas and spend:
+        roas = round(value / spend, 2)
     return {
         "spend": int(round(spend)),
         "impresi": int(fnum(row.get("impressions"))),
         "reach": int(fnum(row.get("reach"))),
         "frekuensi": round(fnum(row.get("frequency")), 2),
-        "klik": int(fnum(row.get("inline_link_clicks"))),
+        "klik": klik,
         "ctr": round(fnum(row.get("ctr")), 2),
         "cpc": int(round(fnum(row.get("cpc")))),
         "viewlp": actval(a, MAP["viewlp"]),
         "klikwa": actval(a, MAP["klikwa"]),
         "contact": actval(a, MAP["contact"]),
-        "viewcontent": actval(a, MAP["viewcontent"]),
-        "addtocart": actval(a, MAP["addtocart"]),
-        "checkout": actval(a, MAP["checkout"]),
         "order": order,
         "value": value,
-        "roas": round(value / spend, 2) if spend else 0,
+        "roas": roas,
     }
 
 
