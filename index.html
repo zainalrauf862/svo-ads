@@ -528,7 +528,13 @@
     'RIOARRIDHO1204':[['Dyah Annisa L','1KY7cR6EjC41vm0nQomTrogICtsYm8VBa']]
   };
   var deList = document.getElementById('deList');
-  deIds.forEach(function(id){
+  /* urut: yang sudah submit di atas (SE terbanyak dulu), lalu sisanya alfabetis */
+  var deSorted = deIds.slice().sort(function(a,b){
+    var na=(deSE[a]||[]).length, nb=(deSE[b]||[]).length;
+    if(nb!==na) return nb-na;
+    return a<b?-1:(a>b?1:0);
+  });
+  deSorted.forEach(function(id){
     var you = id === SELF ? ' <span class="badge-you">· kamu</span>' : '';
     var ses = deSE[id] || [];
     var n = ses.length;
