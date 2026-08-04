@@ -243,7 +243,6 @@
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-view="rekrut">📥 Perekrutan</button>
     <button class="tab" role="tab" aria-selected="false" data-view="hasil">📊 Hasil &amp; Performa</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="progress">📈 Progress &amp; Monitoring</button>
     <button class="tab" role="tab" aria-selected="false" data-view="de">👥 DE &amp; Tim SE <span class="tnum">27</span></button>
   </nav>
 
@@ -388,47 +387,6 @@
     </div>
   </section>
 
-  <!-- ============ VIEW 3: PROGRESS & MONITORING ============ -->
-  <section class="view" id="v-progress">
-    <div class="view-head">
-      <h2>Dashboard Progress &amp; Monitoring</h2>
-      <p>Kepatuhan klaim, probation, dan periode klaim tiap SE</p>
-    </div>
-
-    <div class="kpis">
-      <div class="kpi" style="--accent:var(--good)">
-        <div class="lbl">Report Lengkap</div>
-        <div class="val">0</div>
-        <div class="sub">PDF + screenshot ads</div>
-      </div>
-      <div class="kpi" style="--accent:var(--critical)">
-        <div class="lbl">Perlu Tindak Lanjut</div>
-        <div class="val">0</div>
-        <div class="sub">report kurang / belum lapor</div>
-      </div>
-      <div class="kpi" style="--accent:var(--warn)">
-        <div class="lbl">Dalam Probation</div>
-        <div class="val">0</div>
-        <div class="sub">probation 1 bulan</div>
-      </div>
-      <div class="kpi" style="--accent:var(--brand)">
-        <div class="lbl">SE Aktif</div>
-        <div class="val">0</div>
-        <div class="sub">dalam periode klaim</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Status Klaim &amp; Kepatuhan per SE</h3>
-      <p class="csub">Periode klaim 3 bulan sejak SE didaftarkan ke Globemerce · Branch Leader berhak cek detail</p>
-      <div class="empty">
-        <div class="empty-ic">🧾</div>
-        <h4>Belum ada SE yang wajib lapor</h4>
-        <p>Setiap SE menandai "sudah upload report PDF + screenshot ads" tiap bulan. Yang belum lengkap otomatis muncul merah di sini, jadi tidak perlu buka satu-satu PDF untuk tahu siapa yang perlu ditagih.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ VIEW 4: DE & TIM SE ============ -->
   <section class="view" id="v-de">
     <div class="view-head">
@@ -478,7 +436,7 @@
 (function(){
   /* ---------- Tabs ---------- */
   var tabs = document.querySelectorAll('.tab');
-  var views = { rekrut:'v-rekrut', hasil:'v-hasil', progress:'v-progress', de:'v-de' };
+  var views = { rekrut:'v-rekrut', hasil:'v-hasil', de:'v-de' };
   tabs.forEach(function(t){
     t.addEventListener('click', function(){
       tabs.forEach(function(x){ x.setAttribute('aria-selected','false'); });
