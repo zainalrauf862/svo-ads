@@ -4,208 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Dashboard Iklan Tim SE — SVO Yogyakarta</title>
+<title>Dashboard SVO Yogyakarta</title>
 <style>
-  :root{color-scheme:light;--ground:#f5f5f1;--surface-1:#fff;--surface-2:#fbfbf8;--ink:#17181c;--ink-2:#55544f;--muted:#8a8983;--grid:#e7e6df;--hairline:rgba(17,18,20,.09);--border:rgba(17,18,20,.12);--brand:#0e7a6e;--brand-soft:#e2f1ee;--brand-ink:#0a5951;--p-novia:#2a78d6;--p-dvn:#eb6834;--p-erojan:#1baf7a;--good:#0ca30c;--good-ink:#067006;--warn:#d98a00;--critical:#d03b3b;--good-bg:rgba(12,163,12,.12);--warn-bg:rgba(217,138,0,.14);--critical-bg:rgba(208,59,59,.12);--shadow:0 1px 2px rgba(17,18,20,.04),0 6px 20px rgba(17,18,20,.05);--radius:14px;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-  @media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--ground:#0d0e10;--surface-1:#17191d;--surface-2:#1c1f24;--ink:#f2f2ef;--ink-2:#b8b7af;--muted:#8a8983;--grid:#2a2c31;--hairline:rgba(255,255,255,.09);--border:rgba(255,255,255,.13);--brand:#2fb7a6;--brand-soft:#12332f;--brand-ink:#6fd8ca;--p-novia:#3987e5;--p-dvn:#e0662f;--p-erojan:#22b381;--good:#16b516;--good-ink:#4cd44c;--warn:#f0a92a;--critical:#e05555;--good-bg:rgba(22,181,22,.16);--warn-bg:rgba(240,169,42,.16);--critical-bg:rgba(224,85,85,.16);--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35)}}
-  :root[data-theme="dark"]{color-scheme:dark;--ground:#0d0e10;--surface-1:#17191d;--surface-2:#1c1f24;--ink:#f2f2ef;--ink-2:#b8b7af;--muted:#8a8983;--grid:#2a2c31;--hairline:rgba(255,255,255,.09);--border:rgba(255,255,255,.13);--brand:#2fb7a6;--brand-soft:#12332f;--brand-ink:#6fd8ca;--p-novia:#3987e5;--p-dvn:#e0662f;--p-erojan:#22b381;--good:#16b516;--good-ink:#4cd44c;--warn:#f0a92a;--critical:#e05555;--good-bg:rgba(22,181,22,.16);--warn-bg:rgba(240,169,42,.16);--critical-bg:rgba(224,85,85,.16);--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35)}
-  *{box-sizing:border-box}body{margin:0;font-family:var(--sans);background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
-  header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--hairline)}
-  .top-inner{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .brandmark{display:flex;align-items:center;gap:11px;min-width:0}
-  .logo{width:38px;height:38px;border-radius:10px;flex:none;background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--brand) 55%,#000));color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:.5px;box-shadow:var(--shadow)}
-  .brand-txt h1{font-size:15px;margin:0;font-weight:700;letter-spacing:-.01em}
-  .brand-txt p{font-size:12px;margin:1px 0 0;color:var(--muted)}
-  .top-spacer{flex:1 1 auto}
-  .chip-info{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--brand-ink);background:var(--brand-soft);padding:6px 11px;border-radius:999px;white-space:nowrap}
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-bg)}
-  .theme-btn{border:1px solid var(--border);background:var(--surface-1);color:var(--ink);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
-  .theme-btn:hover{background:var(--surface-2)}
-  nav.tabs{display:flex;gap:4px;margin:22px 0 8px;flex-wrap:wrap;background:var(--surface-2);padding:5px;border-radius:12px;border:1px solid var(--hairline);width:fit-content}
-  .tab{border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-2);padding:9px 16px;border-radius:8px;display:flex;align-items:center;gap:8px}
-  .tab:hover{color:var(--ink)}
-  .tab[aria-selected="true"]{background:var(--surface-1);color:var(--ink);box-shadow:var(--shadow)}
-  .updated{font-size:11.5px;color:var(--muted);margin:0 0 20px 4px}
-  .view{display:none}.view.active{display:block}
-  .view-head{margin-bottom:16px}.view-head h2{font-size:20px;margin:0 0 3px;letter-spacing:-.02em}.view-head p{margin:0;color:var(--muted);font-size:13px}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-  @media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}@media (max-width:460px){.kpis{grid-template-columns:1fr}}
-  .kpi{background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--brand))}
-  .kpi .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-  .kpi .val{font-size:25px;font-weight:750;margin:7px 0 2px;letter-spacing:-.02em}
-  .kpi .val small{font-size:14px;font-weight:600;color:var(--muted)}
-  .kpi .sub{font-size:12px;color:var(--ink-2)}
-  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:999px;white-space:nowrap}
-  .se-list{display:flex;flex-direction:column;gap:10px}
-  .se-item{background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-  .se-head{width:100%;display:flex;align-items:center;gap:12px;padding:13px 16px;background:transparent;border:0;cursor:pointer;font:inherit;text-align:left;color:var(--ink)}
-  .se-head:hover{background:var(--surface-2)}
-  .ava{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-size:12px;color:#fff;background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--brand) 55%,#000))}
-  .metablk{display:flex;flex-direction:column;min-width:0;flex:1 1 auto}
-  .nm{font-weight:650;font-size:14px}.nm .sub{display:block;color:var(--muted);font-weight:500;font-size:11px}
-  .hl{display:flex;flex-direction:column;align-items:flex-end;gap:1px;white-space:nowrap}
-  .hl .hk{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-  .hl .hv{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums}
-  @media (max-width:560px){.hl.spend{display:none}}
-  .caret{color:var(--muted);transition:transform .2s;font-size:11px;flex:none}.se-item.open .caret{transform:rotate(180deg)}
-  .se-body{display:none;padding:6px 16px 18px;border-top:1px solid var(--hairline)}.se-item.open .se-body{display:block}
-  .funnel{display:grid;grid-template-columns:1fr 1fr;gap:0 30px}@media (max-width:600px){.funnel{grid-template-columns:1fr}}
-  .frow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px dashed var(--hairline);font-size:13px}
-  .frow .k{color:var(--ink-2);display:flex;align-items:center;gap:9px}.frow .k .em{width:18px;text-align:center;flex:none}
-  .frow .v{font-weight:650;font-variant-numeric:tabular-nums;text-align:right}
-  .frow .v small{display:block;font-weight:500;font-size:11px;color:var(--muted);margin-top:1px}
-  .roasdot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-left:6px;vertical-align:middle}
-  .roas-g{background:var(--good)}.roas-a{background:var(--warn)}.roas-r{background:var(--critical)}
-  table{border-collapse:collapse;width:100%;font-size:13px;min-width:560px}.tbl-wrap{overflow-x:auto;margin:0 -4px}
-  thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;padding:0 12px 9px;border-bottom:1px solid var(--border);white-space:nowrap}
-  th.r,td.r{text-align:right}tbody td{padding:11px 12px;border-bottom:1px solid var(--hairline)}tbody tr:last-child td{border-bottom:0}tbody tr:hover td{background:var(--surface-2)}
-  td.num{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}.nmc{font-weight:650}
-  .camp-off td{color:var(--muted)}td.pos{color:var(--good-ink);font-weight:700}
-  .note{margin-top:20px;font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:9px;padding:13px 15px;background:var(--surface-2);border:1px dashed var(--border);border-radius:12px}.note b{color:var(--ink-2)}
-  .state{text-align:center;padding:60px 20px;color:var(--muted)}.state h4{margin:0 0 6px;color:var(--ink-2);font-size:16px}.state p{margin:0 auto;max-width:420px;font-size:13px}
-  .foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--muted)}
+  :root{
+    --ground:#f5f5f1;--surface:#fff;--ink:#17181c;--ink-2:#55544f;--muted:#8a8983;
+    --hairline:rgba(17,18,20,.09);--border:rgba(17,18,20,.12);
+    --brand:#0e7a6e;--brand-soft:#e2f1ee;--brand-ink:#0a5951;
+    --shadow:0 1px 2px rgba(17,18,20,.05),0 4px 14px rgba(17,18,20,.05);
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){
+    --ground:#0d0e10;--surface:#17191d;--ink:#f2f2ef;--ink-2:#b8b7af;--muted:#8a8983;
+    --hairline:rgba(255,255,255,.09);--border:rgba(255,255,255,.13);
+    --brand:#2fb7a6;--brand-soft:#12332f;--brand-ink:#6fd8ca;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0d0e10;--surface:#17191d;--ink:#f2f2ef;--ink-2:#b8b7af;--muted:#8a8983;
+    --hairline:rgba(255,255,255,.09);--border:rgba(255,255,255,.13);
+    --brand:#2fb7a6;--brand-soft:#12332f;--brand-ink:#6fd8ca;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;font-family:var(--sans);background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--hairline);background:var(--surface);flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--brand) 55%,#000));color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none;box-shadow:var(--shadow)}
+  .brand b{font-size:14px;display:block;line-height:1.15;letter-spacing:-.01em}
+  .brand span{font-size:11px;color:var(--muted)}
+  .switch{display:flex;gap:4px;background:var(--ground);border:1px solid var(--hairline);border-radius:11px;padding:4px}
+  .switch button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);padding:8px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .15s}
+  .switch button:hover{color:var(--ink)}
+  .switch button.active{background:var(--surface);color:var(--brand-ink);box-shadow:var(--shadow)}
+  .theme{margin-left:auto;border:1px solid var(--border);background:var(--surface);color:var(--ink);width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:15px;display:grid;place-items:center}
+  .theme:hover{background:var(--ground)}
+  .frames{flex:1;position:relative;background:var(--ground)}
+  iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--ground)}
+  iframe.active{display:block}
+  @media (max-width:560px){.brand span{display:none}.switch button{padding:8px 12px;font-size:12.5px}}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner">
-  <div class="brandmark"><div class="logo">SVO</div>
-    <div class="brand-txt"><h1>Dashboard Iklan — Tim SE</h1><p>Performa Meta Ads seluruh Sales Expert · SVO Yogyakarta</p></div></div>
-  <div class="top-spacer"></div>
-  <span class="chip-info"><span class="dot"></span><span id="liveState">LIVE</span></span>
-  <button class="theme-btn" id="themeToggle" aria-label="Ganti tema">🌙</button>
-</div></header>
-
-<div class="wrap">
-  <nav class="tabs" role="tablist">
-    <button class="tab" role="tab" aria-selected="true"  data-view="harian">📅 Harian</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="kemarin">↩️ Kemarin</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="bulanan">📆 Bulan Ini</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="camp">🟢 Campaign Aktif</button>
-  </nav>
-  <p class="updated" id="updated">Memuat data…</p>
-
-  <section class="view active" id="v-harian"></section>
-  <section class="view" id="v-kemarin"></section>
-  <section class="view" id="v-bulanan"></section>
-  <section class="view" id="v-camp"></section>
-
-  <div class="note"><span>ℹ️</span><div>Data ditarik otomatis dari Meta Marketing API (token disimpan aman di server). <b>View LP / Klik WA / Contact / Purchase</b> muncul sesuai event yang terekam di tiap akun iklan.</div></div>
-  <p class="foot">Dashboard Iklan Tim SE · SVO Yogyakarta</p>
-</div>
+  <header class="top">
+    <div class="brand">
+      <div class="logo">SVO</div>
+      <div><b>SVO Yogyakarta</b><span>Dashboard Terpadu</span></div>
+    </div>
+    <nav class="switch" role="tablist">
+      <button data-f="rekrut" class="active" role="tab">📋 Rekrutmen SE</button>
+      <button data-f="iklan" role="tab">📣 Iklan Tim SE</button>
+    </nav>
+    <button class="theme" id="themeBtn" aria-label="Ganti tema">🌙</button>
+  </header>
+  <div class="frames">
+    <iframe id="f-rekrut" src="rekrut.html" class="active" title="Dashboard Rekrutmen SE"></iframe>
+    <iframe id="f-iklan" src="iklan.html" title="Dashboard Iklan Tim SE"></iframe>
+  </div>
 
 <script>
 (function(){
-  var P={Novia:'var(--p-novia)',DVN:'var(--p-dvn)',Erojan:'var(--p-erojan)'};
-  function rp(n){return 'Rp'+Math.round(n||0).toLocaleString('id-ID');}
-  function rpC(n){n=n||0;if(n>=1e9)return 'Rp'+(n/1e9).toLocaleString('id-ID',{maximumFractionDigits:1})+' M';if(n>=1e6)return 'Rp'+(n/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt';if(n>=1e3)return 'Rp'+Math.round(n/1e3)+'rb';return 'Rp'+Math.round(n);}
-  function num(n){return Math.round(n||0).toLocaleString('id-ID');}
-  function pct(a,b){return b?(a/b*100).toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%':'0%';}
-  function dec(n,d){return (n||0).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d});}
-  function roasCls(r){return r>=2?'roas-g':(r>=1?'roas-a':'roas-r');}
-  function der(m){m=m||{};var o={};for(var k in m)o[k]=m[k];o.spend=o.spend||0;o.contact=o.contact||0;o.value=o.value||0;o.cc=o.contact?o.spend/o.contact:0;o.roas=(o.roas!=null)?o.roas:(o.spend?o.value/o.spend:0);return o;}
-  function kpi(a,l,v,s){return '<div class="kpi" style="--accent:'+a+'"><div class="lbl">'+l+'</div><div class="val">'+v+'</div><div class="sub">'+s+'</div></div>';}
-
-  function funnel(m){
-    var freq=m.reach?(m.impresi/m.reach):(m.frekuensi||0),cpc=m.klik?m.spend/m.klik:0;
-    var rows=[
-      ['💰','Spend',rp(m.spend),''],
-      ['👁️','Impresi',num(m.impresi),''],
-      ['📢','Reach',num(m.reach),'frekuensi '+dec(freq,2)],
-      ['🔗','Klik Tautan',num(m.klik),pct(m.klik,m.impresi)+' dari impresi · CPC '+rp(cpc)],
-      ['📄','View LP',num(m.viewlp),pct(m.viewlp,m.klik)+' dari klik'],
-      ['📲','Klik WA',num(m.klikwa),pct(m.klikwa,m.viewlp)+' dari View LP'],
-      ['💬','Contact',num(m.contact),pct(m.contact,m.klikwa)+' dari Klik WA'],
-      ['🧾','Cost/Contact',m.contact?rp(m.spend/m.contact):'—',''],
-      ['🛒','Purchase',num(m.order)+' order · '+rp(m.value),pct(m.order,m.contact)+' dari contact'],
-      ['📈','ROAS',dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span>','']
-    ];
-    return '<div class="funnel">'+rows.map(function(r){var s=r[3]?'<small>'+r[3]+'</small>':'';return '<div class="frow"><span class="k"><span class="em">'+r[0]+'</span>'+r[1]+'</span><span class="v">'+r[2]+s+'</span></div>';}).join('')+'</div>';
+  var btns = [].slice.call(document.querySelectorAll('.switch button'));
+  var frames = { rekrut: document.getElementById('f-rekrut'), iklan: document.getElementById('f-iklan') };
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.classList.toggle('active', x === b); x.setAttribute('aria-selected', x===b?'true':'false'); });
+      Object.keys(frames).forEach(function(k){ frames[k].classList.toggle('active', k === b.dataset.f); });
+    });
+  });
+  /* theme: satu tombol mengatur shell + kedua iframe (same-origin) */
+  var theme = null, tb = document.getElementById('themeBtn');
+  function setIframe(f){ if(theme){ try{ f.contentDocument.documentElement.setAttribute('data-theme', theme); }catch(e){} } }
+  function apply(t){
+    theme = t;
+    document.documentElement.setAttribute('data-theme', t);
+    setIframe(frames.rekrut); setIframe(frames.iklan);
+    tb.textContent = t === 'dark' ? '☀️' : '🌙';
   }
-
-  function renderPeriod(key){
-    var list=(DATA.accounts||[]).map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
-    var tSpend=0,tContact=0,tValue=0,tOrder=0;
-    list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
-    var roas=tSpend?tValue/tSpend:0;
-    var TT={harian:'Hari Ini',kemarin:'Kemarin',bulanan:'Bulan Ini'};
-    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini (bulan berjalan) · per Sales Expert'}[key];
-    var kpis='<div class="kpis">'+
-      kpi('var(--brand)','Total Spend',rpC(tSpend),'seluruh SE')+
-      kpi('var(--p-novia)','Total Contact',num(tContact),'lead / chat masuk')+
-      kpi('var(--p-erojan)','Total Purchase',rpC(tValue),num(tOrder)+' order')+
-      kpi('var(--warn)','ROAS Tim',dec(roas,2)+'×','target sehat ≥ 2×')+'</div>';
-    if(!list.length) return kpis+'<div class="state"><h4>Belum ada akun</h4><p>Tambahkan akun iklan SE di accounts.json pada server.</p></div>';
-    var items=list.map(function(x,i){
-      var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'');
-      return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
-        '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+a.se+'<span class="sub">'+desub+'</span></span></span>'+
-        '<span class="hl spend"><span class="hk">Spend</span><span class="hv">'+rpC(m.spend)+'</span></span>'+
-        '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
-        '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
-    }).join('');
-    return '<div class="view-head"><h2>Report '+(TT[key]||key)+'</h2><p>'+sub+'</p></div>'+kpis+'<div class="se-list">'+items+'</div>';
-  }
-
-  function campRow(c){
-    var m=der(c),on=c.on!==false,ctr=m.impresi?(m.klik/m.impresi*100):0,cpc=m.klik?m.spend/m.klik:0,cc=m.contact?m.spend/m.contact:0,roas=(m.roas!=null&&m.roas)?m.roas:(m.spend?m.value/m.spend:0);
-    return '<tr class="'+(on?'':'camp-off')+'"><td class="nmc">'+(c.name||'')+(on?'':' (Off)')+'</td>'+
-      '<td class="num">'+rp(m.spend)+'</td><td class="num">'+num(m.impresi)+'</td><td class="num">'+num(m.klik)+'</td>'+
-      '<td class="num">'+dec(ctr,1)+'%</td><td class="num">'+rp(cpc)+'</td><td class="num">'+num(m.viewlp)+'</td>'+
-      '<td class="num">'+num(m.klikwa)+'</td><td class="num'+(m.contact&&on?' pos':'')+'">'+num(m.contact)+'</td>'+
-      '<td class="num">'+(m.contact?rp(cc):'—')+'</td><td class="num'+(m.order&&on?' pos':'')+'">'+num(m.order)+'</td>'+
-      '<td class="num'+(m.order&&on?' pos':'')+'">'+(m.order?dec(roas,2)+'×':'—')+'</td></tr>';
-  }
-  function renderCamp(){
-    var groups=(DATA.accounts||[]).map(function(a){var cs=(a.campaigns||[]).slice().sort(function(x,y){return (y.spend||0)-(x.spend||0);});
-      return {a:a,cs:cs,total:cs.reduce(function(s,c){return s+(c.spend||0);},0),orders:cs.reduce(function(s,c){return s+(c.order||0);},0),value:cs.reduce(function(s,c){return s+(c.value||0);},0)};})
-      .filter(function(g){return g.cs.length;}).sort(function(x,y){return y.total-x.total;});
-    var totC=groups.reduce(function(s,g){return s+g.cs.length;},0),totS=groups.reduce(function(s,g){return s+g.total;},0),totO=groups.reduce(function(s,g){return s+g.orders;},0),totV=groups.reduce(function(s,g){return s+g.value;},0);
-    var most=groups.slice().sort(function(x,y){return y.cs.length-x.cs.length;})[0];
-    var head='<div class="view-head"><h2>Campaign Aktif Hari Ini</h2><p>Hanya campaign yang aktif / spend / purchase hari ini · per SE · (Off) = dimatikan tapi sempat spend</p></div>';
-    var kpis='<div class="kpis">'+
-      kpi('var(--good)','Campaign Hari Ini',totC,'di '+groups.length+' SE')+
-      kpi('var(--brand)','Spend Hari Ini',rpC(totS),'dari campaign tsb')+
-      kpi('var(--p-erojan)','Purchase Hari Ini',totO+'<small> order</small>',rpC(totV))+
-      kpi('var(--warn)','Terbanyak',most?most.cs.length+'<small> campaign</small>':'—',most?'oleh '+most.a.se:'')+'</div>';
-    if(!groups.length) return head+kpis+'<div class="state"><h4>Belum ada campaign aktif hari ini</h4><p>Belum ada campaign yang spend atau aktif hari ini di akun mana pun.</p></div>';
-    var items=groups.map(function(g,i){
-      var rows=g.cs.map(campRow).join('');
-      return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
-        '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+g.a.se+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
-        '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
-        '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
-        '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+
-        '<thead><tr><th>Campaign</th><th class="r">Spend</th><th class="r">Impresi</th><th class="r">Klik Link</th><th class="r">CTR</th><th class="r">CPC</th><th class="r">View LP</th><th class="r">Klik WA</th><th class="r">Contact</th><th class="r">Cost/Ctc</th><th class="r">Purchase</th><th class="r">ROAS</th></tr></thead>'+
-        '<tbody>'+rows+'</tbody></table></div></div></div>';
-    }).join('');
-    return head+kpis+'<div class="se-list">'+items+'</div>';
-  }
-
-  var DATA={accounts:[]};
-  function boot(){
-    document.getElementById('updated').innerHTML='Terakhir diperbarui: <b>'+(DATA.updated||'—')+'</b> WIB · otomatis dari Meta API tiap ±30 menit';
-    document.getElementById('v-harian').innerHTML=renderPeriod('harian');
-    document.getElementById('v-kemarin').innerHTML=renderPeriod('kemarin');
-    document.getElementById('v-bulanan').innerHTML=renderPeriod('bulanan');
-    document.getElementById('v-camp').innerHTML=renderCamp();
-  }
-  function fail(msg){
-    document.getElementById('liveState').textContent='OFFLINE';
-    document.querySelector('.chip-info').style.color='var(--critical)';
-    document.getElementById('updated').textContent='Gagal memuat data.';
-    document.getElementById('v-harian').innerHTML='<div class="state"><h4>Data belum tersedia</h4><p>'+msg+'</p></div>';
-  }
-  fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){DATA=d||DATA;boot();}).catch(function(){fail('File data.json belum ada / skrip fetch.py belum jalan di server. Coba jalankan: python3 /opt/svo-ads/fetch.py');});
-
-  document.addEventListener('click',function(e){var h=e.target.closest('.se-head');if(!h)return;var it=h.parentNode,o=it.classList.toggle('open');h.setAttribute('aria-expanded',o?'true':'false');});
-  var tabs=document.querySelectorAll('.tab'),views={harian:'v-harian',kemarin:'v-kemarin',bulanan:'v-bulanan',camp:'v-camp'};
-  tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected','false');});t.setAttribute('aria-selected','true');Object.values(views).forEach(function(id){document.getElementById(id).classList.remove('active');});document.getElementById(views[t.dataset.view]).classList.add('active');});});
-  var tt=document.getElementById('themeToggle');
-  tt.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':(c==='light'?'dark':(matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark'));document.documentElement.setAttribute('data-theme',n);tt.textContent=n==='dark'?'☀️':'🌙';});
+  tb.addEventListener('click', function(){
+    var cur = theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    apply(cur === 'dark' ? 'light' : 'dark');
+  });
+  frames.rekrut.addEventListener('load', function(){ setIframe(frames.rekrut); });
+  frames.iklan.addEventListener('load', function(){ setIframe(frames.iklan); });
 })();
 </script>
 </body>

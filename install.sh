@@ -16,6 +16,8 @@ echo "[2/7] Ambil file dashboard & skrip…"
 mkdir -p /opt/svo-ads /var/www/tim
 curl -fsSL "$REPO/fetch.py"    -o /opt/svo-ads/fetch.py
 curl -fsSL "$REPO/index.html"  -o /var/www/tim/index.html
+curl -fsSL "$REPO/iklan.html"  -o /var/www/tim/iklan.html
+curl -fsSL "$REPO/rekrut.html" -o /var/www/tim/rekrut.html
 
 # accounts.json (mapping akun -> SE). Awal: SVO SONYA - 01
 if [ ! -f /opt/svo-ads/accounts.json ]; then
