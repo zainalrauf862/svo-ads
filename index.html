@@ -80,14 +80,14 @@
 <div class="wrap">
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true"  data-view="harian">📅 Harian</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="mingguan">🗓️ Mingguan</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="bulanan">📆 Bulanan</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="kemarin">↩️ Kemarin</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="bulanan">📆 Bulan Ini</button>
     <button class="tab" role="tab" aria-selected="false" data-view="camp">🟢 Campaign Aktif</button>
   </nav>
   <p class="updated" id="updated">Memuat data…</p>
 
   <section class="view active" id="v-harian"></section>
-  <section class="view" id="v-mingguan"></section>
+  <section class="view" id="v-kemarin"></section>
   <section class="view" id="v-bulanan"></section>
   <section class="view" id="v-camp"></section>
 
@@ -129,7 +129,8 @@
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
     list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
     var roas=tSpend?tValue/tSpend:0;
-    var sub={harian:'Hari ini · per Sales Expert',mingguan:'7 hari terakhir · per Sales Expert',bulanan:'30 hari terakhir · per Sales Expert'}[key];
+    var TT={harian:'Hari Ini',kemarin:'Kemarin',bulanan:'Bulan Ini'};
+    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini (bulan berjalan) · per Sales Expert'}[key];
     var kpis='<div class="kpis">'+
       kpi('var(--brand)','Total Spend',rpC(tSpend),'seluruh SE')+
       kpi('var(--p-novia)','Total Contact',num(tContact),'lead / chat masuk')+
@@ -145,7 +146,7 @@
         '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
         '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
     }).join('');
-    return '<div class="view-head"><h2>Report '+key.charAt(0).toUpperCase()+key.slice(1)+'</h2><p>'+sub+'</p></div>'+kpis+'<div class="se-list">'+items+'</div>';
+    return '<div class="view-head"><h2>Report '+(TT[key]||key)+'</h2><p>'+sub+'</p></div>'+kpis+'<div class="se-list">'+items+'</div>';
   }
 
   function campRow(c){
@@ -188,7 +189,7 @@
   function boot(){
     document.getElementById('updated').innerHTML='Terakhir diperbarui: <b>'+(DATA.updated||'—')+'</b> WIB · otomatis dari Meta API tiap ±30 menit';
     document.getElementById('v-harian').innerHTML=renderPeriod('harian');
-    document.getElementById('v-mingguan').innerHTML=renderPeriod('mingguan');
+    document.getElementById('v-kemarin').innerHTML=renderPeriod('kemarin');
     document.getElementById('v-bulanan').innerHTML=renderPeriod('bulanan');
     document.getElementById('v-camp').innerHTML=renderCamp();
   }
@@ -201,7 +202,7 @@
   fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){DATA=d||DATA;boot();}).catch(function(){fail('File data.json belum ada / skrip fetch.py belum jalan di server. Coba jalankan: python3 /opt/svo-ads/fetch.py');});
 
   document.addEventListener('click',function(e){var h=e.target.closest('.se-head');if(!h)return;var it=h.parentNode,o=it.classList.toggle('open');h.setAttribute('aria-expanded',o?'true':'false');});
-  var tabs=document.querySelectorAll('.tab'),views={harian:'v-harian',mingguan:'v-mingguan',bulanan:'v-bulanan',camp:'v-camp'};
+  var tabs=document.querySelectorAll('.tab'),views={harian:'v-harian',kemarin:'v-kemarin',bulanan:'v-bulanan',camp:'v-camp'};
   tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected','false');});t.setAttribute('aria-selected','true');Object.values(views).forEach(function(id){document.getElementById(id).classList.remove('active');});document.getElementById(views[t.dataset.view]).classList.add('active');});});
   var tt=document.getElementById('themeToggle');
   tt.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':(c==='light'?'dark':(matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark'));document.documentElement.setAttribute('data-theme',n);tt.textContent=n==='dark'?'☀️':'🌙';});

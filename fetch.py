@@ -17,7 +17,7 @@ try:
 except Exception:
     ACC = {}
 
-PERIODS = {"harian": "today", "mingguan": "last_7d", "bulanan": "last_30d"}
+PERIODS = {"harian": "today", "kemarin": "yesterday", "bulanan": "this_month"}
 FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values,purchase_roas"
 
 # Pemetaan action_type Meta -> tahap funnel (best-effort; dikalibrasi dari _debug_actions.json)
