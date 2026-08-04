@@ -22,6 +22,10 @@
   .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-bg)}
   .theme-btn{border:1px solid var(--border);background:var(--surface-1);color:var(--ink);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
   .theme-btn:hover{background:var(--surface-2)}
+  .areaswitch{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--hairline);border-radius:10px;padding:4px}
+  .areaswitch a{text-decoration:none;font-size:13px;font-weight:600;color:var(--ink-2);padding:7px 14px;border-radius:7px;white-space:nowrap;display:flex;align-items:center;gap:6px}
+  .areaswitch a.on{background:var(--surface-1);color:var(--brand-ink);box-shadow:var(--shadow)}
+  .areaswitch a:hover{color:var(--ink)}
   nav.tabs{display:flex;gap:4px;margin:22px 0 8px;flex-wrap:wrap;background:var(--surface-2);padding:5px;border-radius:12px;border:1px solid var(--hairline);width:fit-content}
   .tab{border:0;background:transparent;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-2);padding:9px 16px;border-radius:8px;display:flex;align-items:center;gap:8px}
   .tab:hover{color:var(--ink)}
@@ -72,6 +76,7 @@
 <header class="top"><div class="top-inner">
   <div class="brandmark"><div class="logo">SVO</div>
     <div class="brand-txt"><h1>Dashboard Iklan — Tim SE</h1><p>Performa Meta Ads seluruh Sales Expert · SVO Yogyakarta</p></div></div>
+  <nav class="areaswitch"><a href="index.html">📋 Rekrutmen SE</a><a href="iklan.html" class="on">📣 Iklan Tim SE</a></nav>
   <div class="top-spacer"></div>
   <span class="chip-info"><span class="dot"></span><span id="liveState">LIVE</span></span>
   <button class="theme-btn" id="themeToggle" aria-label="Ganti tema">🌙</button>
