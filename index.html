@@ -322,22 +322,22 @@
     <div class="kpis">
       <div class="kpi" style="--accent:var(--brand)">
         <div class="lbl">Total Spending Ads</div>
-        <div class="val">Rp0</div>
+        <div class="val" id="hp-spend">Rp0</div>
         <div class="sub">Meta + TikTok + Google</div>
       </div>
       <div class="kpi" style="--accent:var(--p-erojan)">
         <div class="lbl">Total Free Product</div>
-        <div class="val">0</div>
+        <div class="val" id="hp-free">0</div>
         <div class="sub">diinject ke ID DE sponsor</div>
       </div>
       <div class="kpi" style="--accent:var(--p-novia)">
         <div class="lbl">SE Mencapai Tier</div>
-        <div class="val">0</div>
+        <div class="val" id="hp-tier">0</div>
         <div class="sub">belum ada laporan</div>
       </div>
       <div class="kpi" style="--accent:var(--p-dvn)">
         <div class="lbl">Rata-rata / SE</div>
-        <div class="val">Rp0</div>
+        <div class="val" id="hp-avg">Rp0</div>
         <div class="sub">spending per SE</div>
       </div>
     </div>
@@ -346,10 +346,12 @@
       <div class="card">
         <h3>Rincian Performa per SE</h3>
         <p class="csub">Spending ads, tier tercapai &amp; free product per bulan</p>
+        <div id="hp-rincian">
         <div class="empty">
           <div class="empty-ic">📊</div>
-          <h4>Belum ada data performa</h4>
-          <p>Tabel ini terisi saat DE menginput spending ads bulanan tiap SE. Dashboard otomatis menentukan tier, menghitung free product, dan mengecualikan produk Coffiy.</p>
+          <h4>Menghubungkan ke Meta Ads…</h4>
+          <p>Data spending per SE ditarik otomatis dari Meta Ads API, lalu dashboard menentukan tier &amp; free product-nya.</p>
+        </div>
         </div>
       </div>
       <div class="card">
@@ -570,6 +572,43 @@
       it.style.display = it.getAttribute('data-name').indexOf(q) > -1 ? '' : 'none';
     });
   });
+
+  /* ---------- Hasil & Performa: tarik dari Meta Ads (data.json, satu domain VPS) ---------- */
+  (function(){
+    var PC={Novia:'var(--p-novia)',DVN:'var(--p-dvn)',Erojan:'var(--p-erojan)'};
+    function rp(n){return 'Rp'+Math.round(n||0).toLocaleString('id-ID');}
+    function rpC(n){n=n||0;if(n>=1e9)return 'Rp'+(n/1e9).toLocaleString('id-ID',{maximumFractionDigits:1})+' M';if(n>=1e6)return 'Rp'+(n/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt';if(n>=1e3)return 'Rp'+Math.round(n/1e3)+'rb';return 'Rp'+Math.round(n);}
+    function tierOf(s){return s>=30000000?3:(s>=20000000?2:(s>=10000000?1:0));}
+    function freeOf(t){return t===3?50:(t===2?30:(t===1?10:0));}
+    var g=function(id){return document.getElementById(id);};
+    fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){
+      var accs=(d.accounts||[]),tSpend=0,tFree=0,tierCnt=0;
+      var list=accs.map(function(a){
+        var sp=(a.periods&&a.periods.bulanan&&a.periods.bulanan.spend)||0;
+        var t=tierOf(sp),f=freeOf(t); tSpend+=sp; tFree+=f; if(t>0)tierCnt++;
+        return {se:a.se,de:a.de,produk:a.produk,sp:sp,t:t,f:f};
+      }).sort(function(x,y){return y.sp-x.sp;});
+      if(g('hp-spend'))g('hp-spend').textContent=rpC(tSpend);
+      if(g('hp-free'))g('hp-free').textContent=tFree;
+      if(g('hp-tier'))g('hp-tier').innerHTML=tierCnt+'<small> / '+accs.length+'</small>';
+      if(g('hp-avg'))g('hp-avg').textContent=rpC(accs.length?tSpend/accs.length:0);
+      var box=g('hp-rincian'); if(!box)return;
+      if(!list.length){box.innerHTML='<div class="empty"><div class="empty-ic">📊</div><h4>Belum ada SE beriklan</h4><p>Terisi saat ada akun iklan SE yang tersambung ke Meta.</p></div>';return;}
+      var rows=list.map(function(x){
+        var tp=x.t?'<span class="pill pill-brand">Tier '+x.t+'</span>':'<span class="pill pill-mute">Belum</span>';
+        var dot=PC[x.produk]||'var(--muted)';
+        var free=x.f?('<b>'+x.f+'</b>'):'<span style="color:var(--muted)">0</span>';
+        return '<tr><td><b>'+x.se+'</b></td><td>DE '+(x.de||'—')+'</td>'+
+          '<td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+dot+'"></span>'+(x.produk||'—')+'</span></td>'+
+          '<td style="text-align:right;font-variant-numeric:tabular-nums">'+rp(x.sp)+'</td>'+
+          '<td>'+tp+'</td>'+
+          '<td style="text-align:right">'+free+'</td></tr>';
+      }).join('');
+      box.innerHTML='<div style="overflow-x:auto"><table class="ref" style="min-width:560px"><thead><tr><th>Sales Expert</th><th>DE Sponsor</th><th>Produk</th><th style="text-align:right">Spending (bln ini)</th><th>Tier</th><th style="text-align:right">Free Product</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+        '<p style="font-size:11.5px;color:var(--muted);margin-top:10px">Spending dari <b>Meta Ads</b> bulan berjalan (auto). TikTok/Google belum ikut — bisa ditambah manual.</p>';
+    }).catch(function(){});
+  })();
+
 })();
 </script>
 </body>
