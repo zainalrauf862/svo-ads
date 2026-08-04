@@ -500,12 +500,6 @@
     'WAHIDIN1521','ZAINAL1022'
   ];
   var SELF = 'ZAINAL1022';
-  var DE_NAME = {
-    'RIOARRIDHO1204':'Kurnia Arridho','WAHIDIN1521':'Ade Wahidin','RIFAI1520':'Muhammad Rifai',
-    'RENALDO1368':'Renaldo Ilham Z','RAY1684':'Ray Prayoga','ALFARIZI1363':'Maulana Alfarizi',
-    'DAUS1615':'Firdaus','AZZAMABDUL1647':'Abdul Azzam','RIDWAN1288':'Ridwan Arifin',
-    'UWAYSALL1277':'Muhammad Uways','HENDRI1551':'Purwaldi Hendri'
-  };
   /* ID folder Drive tiap DE */
   var DE_FOLDER = {
     'ALDIALFIAN1205':'1xfDKRIhlseglaxDd0TggWM0HWC9EUfhp','ALFARIZI1363':'1U-H6UpGCF6CVZtZ_evxNlzUnZc26R56c',
@@ -559,11 +553,11 @@
     }
     var item = document.createElement('div');
     item.className = 'de-item';
-    item.setAttribute('data-name', (id+' '+(DE_NAME[id]||'')).toLowerCase());
+    item.setAttribute('data-name', id.toLowerCase());
     item.innerHTML =
       '<button class="de-head" aria-expanded="false">'+
         '<span class="de-ava">'+id.slice(0,2)+'</span>'+
-        '<span class="de-metablk"><span class="de-name">'+(DE_NAME[id]||id)+you+'</span><span class="de-id">'+(DE_NAME[id]?id:'Folder DE')+'</span></span>'+
+        '<span class="de-metablk"><span class="de-name">'+id+you+'</span><span class="de-id">Folder DE</span></span>'+
         '<span class="de-count">'+n+'<small> SE</small></span>'+
         stat+
         '<span class="de-caret">▼</span>'+
