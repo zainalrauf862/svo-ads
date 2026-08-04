@@ -376,6 +376,8 @@
           <span class="li"><span class="sw" style="background:var(--p-novia)"></span>Novia</span>
           <span class="li"><span class="sw" style="background:var(--p-dvn)"></span>DVN</span>
           <span class="li"><span class="sw" style="background:var(--p-erojan)"></span>Erojan</span>
+          <span class="li"><span class="sw" style="background:#7c3aed"></span>SGLOW</span>
+          <span class="li"><span class="sw" style="background:#e5484d"></span>BLZ PRO</span>
           <span class="li" style="color:var(--muted)">Coffiy — tidak termasuk</span>
         </div>
       </div>
@@ -547,7 +549,7 @@
 
   /* ---------- Hasil & Performa: tarik dari Meta Ads (data.json, satu domain VPS) ---------- */
   (function(){
-    var PC={Novia:'var(--p-novia)',DVN:'var(--p-dvn)',Erojan:'var(--p-erojan)'};
+    var PC={Novia:'var(--p-novia)',DVN:'var(--p-dvn)',Erojan:'var(--p-erojan)','SGLOW':'#7c3aed','S-GLOW':'#7c3aed','BLZ PRO':'#e5484d','BLZPRO':'#e5484d'};
     function rp(n){return 'Rp'+Math.round(n||0).toLocaleString('id-ID');}
     function rpC(n){n=n||0;if(n>=1e9)return 'Rp'+(n/1e9).toLocaleString('id-ID',{maximumFractionDigits:1})+' M';if(n>=1e6)return 'Rp'+(n/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt';if(n>=1e3)return 'Rp'+Math.round(n/1e3)+'rb';return 'Rp'+Math.round(n);}
     function tierOf(s){return s>=30000000?3:(s>=20000000?2:(s>=10000000?1:0));}
