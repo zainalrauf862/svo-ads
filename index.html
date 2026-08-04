@@ -129,7 +129,7 @@
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
     list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
     var roas=tSpend?tValue/tSpend:0;
-    var sub={harian:'Hari ini · per Sales Expert',mingguan:'7 hari terakhir · per Sales Expert',bulanan:'Bulan berjalan · per Sales Expert'}[key];
+    var sub={harian:'Hari ini · per Sales Expert',mingguan:'7 hari terakhir · per Sales Expert',bulanan:'30 hari terakhir · per Sales Expert'}[key];
     var kpis='<div class="kpis">'+
       kpi('var(--brand)','Total Spend',rpC(tSpend),'seluruh SE')+
       kpi('var(--p-novia)','Total Contact',num(tContact),'lead / chat masuk')+
