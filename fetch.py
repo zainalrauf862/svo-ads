@@ -29,6 +29,14 @@ MAP = {
                  "onsite_conversion.lead_grouped", "lead"],
     "purchase": ["purchase", "omni_purchase",
                  "offsite_conversion.fb_pixel_purchase", "onsite_web_purchase"],
+    # funnel jualan web
+    "viewcontent": ["view_content", "omni_view_content",
+                    "offsite_conversion.fb_pixel_view_content", "onsite_web_view_content"],
+    "addtocart":   ["add_to_cart", "omni_add_to_cart",
+                    "offsite_conversion.fb_pixel_add_to_cart", "onsite_web_add_to_cart"],
+    "checkout":    ["initiate_checkout", "omni_initiated_checkout", "add_payment_info",
+                    "offsite_conversion.fb_pixel_initiate_checkout",
+                    "offsite_conversion.fb_pixel_add_payment_info"],
 }
 _seen = set()
 
@@ -82,6 +90,9 @@ def metrics(row):
         "viewlp": actval(a, MAP["viewlp"]),
         "klikwa": actval(a, MAP["klikwa"]),
         "contact": actval(a, MAP["contact"]),
+        "viewcontent": actval(a, MAP["viewcontent"]),
+        "addtocart": actval(a, MAP["addtocart"]),
+        "checkout": actval(a, MAP["checkout"]),
         "order": order,
         "value": value,
         "roas": round(value / spend, 2) if spend else 0,
