@@ -137,7 +137,7 @@
       kpi('var(--warn)','ROAS Tim',dec(roas,2)+'×','target sehat ≥ 2×')+'</div>';
     if(!list.length) return kpis+'<div class="state"><h4>Belum ada akun</h4><p>Tambahkan akun iklan SE di accounts.json pada server.</p></div>';
     var items=list.map(function(x,i){
-      var a=x.a,m=x.m,desub='DE '+(a.de||'—')+(a.produk?' · '+a.produk:'');
+      var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
         '<span class="metablk"><span class="nm">'+a.se+'<span class="sub">'+desub+'</span></span></span>'+
@@ -174,7 +174,7 @@
       var rows=g.cs.map(campRow).join('');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+g.a.se+'<span class="sub">DE '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
+        '<span class="metablk"><span class="nm">'+g.a.se+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
         '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
         '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+
