@@ -165,6 +165,46 @@ def discover():
     return ids
 
 
+SUM_KEYS = ["spend", "impresi", "reach", "klik", "viewlp", "klikwa", "contact", "order", "value"]
+
+
+def _recompute(m):
+    m["frekuensi"] = round(m["impresi"] / m["reach"], 2) if m.get("reach") else 0.0
+    m["ctr"] = round(m["klik"] / m["impresi"] * 100, 2) if m.get("impresi") else 0.0
+    m["cpc"] = int(round(m["spend"] / m["klik"])) if m.get("klik") else 0
+    m["roas"] = round(m["value"] / m["spend"], 2) if m.get("spend") else 0
+
+
+def merge_by_se(accounts):
+    """Gabung akun-akun dgn SE yang sama jadi 1 entri (metrik dijumlahkan)."""
+    order = []
+    by = {}
+    for a in accounts:
+        k = a["se"]
+        if k not in by:
+            by[k] = a
+            a["_ids"] = [a["id"]]
+            order.append(k)
+        else:
+            m = by[k]
+            m["_ids"].append(a["id"])
+            for pk, pv in a["periods"].items():
+                dst = m["periods"].setdefault(pk, {})
+                for kk in SUM_KEYS:
+                    dst[kk] = dst.get(kk, 0) + pv.get(kk, 0)
+            m["campaigns"] = (m.get("campaigns") or []) + (a.get("campaigns") or [])
+    out = []
+    for k in order:
+        m = by[k]
+        if len(m["_ids"]) > 1:  # hanya SE yang punya >1 akun yang perlu dihitung ulang
+            for pk in m["periods"]:
+                _recompute(m["periods"][pk])
+            (m.get("campaigns") or []).sort(key=lambda c: -(c.get("spend") or 0))
+        m["id"] = ",".join(m.pop("_ids"))
+        out.append(m)
+    return out
+
+
 def main():
     ids = list(ACC.keys()) or discover()
     accounts = []
@@ -178,6 +218,7 @@ def main():
             "periods": {k: acct_period(aid, v) for k, v in PERIODS.items()},
             "campaigns": campaigns_today(aid),
         })
+    accounts = merge_by_se(accounts)
     os.makedirs(OUTDIR, exist_ok=True)
     tz = datetime.timezone(datetime.timedelta(hours=7))  # WIB
     out = {"updated": datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M"), "accounts": accounts}
