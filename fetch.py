@@ -17,7 +17,10 @@ try:
 except Exception:
     ACC = {}
 
-PERIODS = {"harian": "today", "kemarin": "yesterday", "bulanan": "this_month"}
+PERIODS = {"harian": "today", "kemarin": "yesterday",
+           "bulanan": "this_month", "bulanlalu": "last_month"}
+ID_BLN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+          "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values,purchase_roas"
 
 # Pemetaan action_type Meta -> tahap funnel (best-effort; dikalibrasi dari _debug_actions.json)
@@ -221,7 +224,14 @@ def main():
     accounts = merge_by_se(accounts)
     os.makedirs(OUTDIR, exist_ok=True)
     tz = datetime.timezone(datetime.timedelta(hours=7))  # WIB
-    out = {"updated": datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M"), "accounts": accounts}
+    now = datetime.datetime.now(tz)
+    prev_end = now.replace(day=1) - datetime.timedelta(days=1)  # hari terakhir bulan lalu
+    out = {
+        "updated": now.strftime("%Y-%m-%d %H:%M"),
+        "bulan_ini_label": ID_BLN[now.month - 1] + " " + str(now.year),
+        "bulan_lalu_label": ID_BLN[prev_end.month - 1] + " " + str(prev_end.year),
+        "accounts": accounts,
+    }
     with open(os.path.join(OUTDIR, "data.json"), "w") as f:
         json.dump(out, f, ensure_ascii=False)
     with open(os.path.join(OUTDIR, "_debug_actions.json"), "w") as f:

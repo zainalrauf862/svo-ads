@@ -86,7 +86,8 @@
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true"  data-view="harian">📅 Harian</button>
     <button class="tab" role="tab" aria-selected="false" data-view="kemarin">↩️ Kemarin</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="bulanan">📆 Bulan Ini</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="bulanan" id="tab-bulanan">📆 Bulan Ini</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="bulanlalu" id="tab-bulanlalu">📅 Bulan Lalu</button>
     <button class="tab" role="tab" aria-selected="false" data-view="camp">🟢 Campaign Aktif</button>
   </nav>
   <p class="updated" id="updated">Memuat data…</p>
@@ -94,6 +95,7 @@
   <section class="view active" id="v-harian"></section>
   <section class="view" id="v-kemarin"></section>
   <section class="view" id="v-bulanan"></section>
+  <section class="view" id="v-bulanlalu"></section>
   <section class="view" id="v-camp"></section>
 
   <div class="note"><span>ℹ️</span><div>Data ditarik otomatis dari Meta Marketing API (token disimpan aman di server). <b>View LP / Klik WA / Contact / Purchase</b> muncul sesuai event yang terekam di tiap akun iklan.</div></div>
@@ -134,8 +136,9 @@
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
     list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
     var roas=tSpend?tValue/tSpend:0;
-    var TT={harian:'Hari Ini',kemarin:'Kemarin',bulanan:'Bulan Ini'};
-    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini (bulan berjalan) · per Sales Expert'}[key];
+    var MI=(DATA.bulan_ini_label||'').split(' ')[0],ML=(DATA.bulan_lalu_label||'').split(' ')[0];
+    var TT={harian:'Hari Ini',kemarin:'Kemarin',bulanan:'Bulan Ini'+(MI?' ('+MI+')':''),bulanlalu:'Bulan '+(ML||'Lalu')};
+    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini ('+(DATA.bulan_ini_label||'bulan berjalan')+') · per Sales Expert',bulanlalu:'Sebulan penuh ('+(DATA.bulan_lalu_label||'bulan lalu')+') · per Sales Expert'}[key];
     var kpis='<div class="kpis">'+
       kpi('var(--brand)','Total Spend',rpC(tSpend),'seluruh SE')+
       kpi('var(--p-novia)','Total Contact',num(tContact),'lead / chat masuk')+
@@ -193,9 +196,13 @@
   var DATA={accounts:[]};
   function boot(){
     document.getElementById('updated').innerHTML='Terakhir diperbarui: <b>'+(DATA.updated||'—')+'</b> WIB · otomatis dari Meta API tiap ±30 menit';
+    var MI=(DATA.bulan_ini_label||'').split(' ')[0],ML=(DATA.bulan_lalu_label||'').split(' ')[0];
+    if(MI)document.getElementById('tab-bulanan').innerHTML='📆 Bulan Ini ('+MI+')';
+    if(ML)document.getElementById('tab-bulanlalu').innerHTML='📅 Bulan '+ML;
     document.getElementById('v-harian').innerHTML=renderPeriod('harian');
     document.getElementById('v-kemarin').innerHTML=renderPeriod('kemarin');
     document.getElementById('v-bulanan').innerHTML=renderPeriod('bulanan');
+    document.getElementById('v-bulanlalu').innerHTML=renderPeriod('bulanlalu');
     document.getElementById('v-camp').innerHTML=renderCamp();
   }
   function fail(msg){
@@ -207,7 +214,7 @@
   fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){DATA=d||DATA;boot();}).catch(function(){fail('File data.json belum ada / skrip fetch.py belum jalan di server. Coba jalankan: python3 /opt/svo-ads/fetch.py');});
 
   document.addEventListener('click',function(e){var h=e.target.closest('.se-head');if(!h)return;var it=h.parentNode,o=it.classList.toggle('open');h.setAttribute('aria-expanded',o?'true':'false');});
-  var tabs=document.querySelectorAll('.tab'),views={harian:'v-harian',kemarin:'v-kemarin',bulanan:'v-bulanan',camp:'v-camp'};
+  var tabs=document.querySelectorAll('.tab'),views={harian:'v-harian',kemarin:'v-kemarin',bulanan:'v-bulanan',bulanlalu:'v-bulanlalu',camp:'v-camp'};
   tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected','false');});t.setAttribute('aria-selected','true');Object.values(views).forEach(function(id){document.getElementById(id).classList.remove('active');});document.getElementById(views[t.dataset.view]).classList.add('active');});});
   var tt=document.getElementById('themeToggle');
   tt.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':(c==='light'?'dark':(matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark'));document.documentElement.setAttribute('data-theme',n);tt.textContent=n==='dark'?'☀️':'🌙';});
