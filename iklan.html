@@ -126,7 +126,7 @@
       ['💬','Contact',num(m.contact),pct(m.contact,m.klikwa)+' dari Klik WA'],
       ['🧾','Cost/Contact',m.contact?rp(m.spend/m.contact):'—',''],
       ['🛒','Purchase',num(m.order)+' order · '+rp(m.value),pct(m.order,m.contact)+' dari contact'],
-      ['🏷️','Cost/Pembelian',m.order?rp(m.spend/m.order):'—',m.order?'biaya iklan per order':'belum ada order'],
+      ['🏷️','Cost/Purchase',m.order?rp(m.spend/m.order):'—',m.order?'biaya iklan per order':'belum ada order'],
       ['📈','ROAS',dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span>','']
     ];
     return '<div class="funnel">'+rows.map(function(r){var s=r[3]?'<small>'+r[3]+'</small>':'';return '<div class="frow"><span class="k"><span class="em">'+r[0]+'</span>'+r[1]+'</span><span class="v">'+r[2]+s+'</span></div>';}).join('')+'</div>';
