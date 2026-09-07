@@ -29,11 +29,25 @@ FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,ac
 MAP = {
     "viewlp":   ["landing_page_view", "omni_landing_page_view"],
     "klikwa":   ["add_to_cart", "offsite_conversion.fb_pixel_add_to_cart", "onsite_web_add_to_cart"],
-    "contact":  ["contact", "contact_total",
-                 "offsite_conversion.fb_pixel_contact", "offsite_conversion.fb_pixel_custom"],
     "purchase": ["omni_purchase", "purchase", "offsite_conversion.fb_pixel_purchase"],
 }
+
+# Contact = "chat/lead benar-benar masuk". Tiap SE pakai funnel berbeda:
+#  - funnel WhatsApp  -> onsite_conversion.messaging_conversation_started_7d
+#  - funnel web/pixel -> offsite_conversion.fb_pixel_custom
+#  - funnel lead form -> lead / fb_pixel_lead
+# Karena itu diambil NILAI TERBESAR di antara kandidat (bukan yang pertama ketemu),
+# supaya akun WA tidak terbaca 0 hanya karena event pixel-nya kebetulan ada sedikit.
+CONTACT_KEYS = [
+    "onsite_conversion.messaging_conversation_started_7d",
+    "offsite_conversion.fb_pixel_custom",
+    "offsite_conversion.fb_pixel_lead",
+    "onsite_conversion.lead",
+    "onsite_web_lead",
+    "lead",
+]
 _seen = set()
+_contact_dbg = {}   # {ad_account_id: {action_type: value}} untuk periode bulan lalu
 
 
 def api(path, params):
@@ -84,6 +98,23 @@ def actvalf(items, keys):
     return 0.0
 
 
+def actbreak(items, keys):
+    """Nilai tiap action_type kandidat yang benar-benar ada (untuk debug & max)."""
+    idx = {}
+    for x in (items or []):
+        t = x.get("action_type")
+        if t:
+            _seen.add(t)
+            if t not in idx:
+                idx[t] = int(round(fnum(x.get("value"))))
+    return {k: idx[k] for k in keys if k in idx}
+
+
+def actmax(items, keys):
+    b = actbreak(items, keys)
+    return max(b.values()) if b else 0
+
+
 def metrics(row):
     a = row.get("actions"); av = row.get("action_values")
     spend = fnum(row.get("spend"))
@@ -103,7 +134,7 @@ def metrics(row):
         "cpc": int(round(fnum(row.get("cpc")))),
         "viewlp": actval(a, MAP["viewlp"]),
         "klikwa": actval(a, MAP["klikwa"]),
-        "contact": actval(a, MAP["contact"]),
+        "contact": actmax(a, CONTACT_KEYS),
         "order": order,
         "value": value,
         "roas": roas,
@@ -114,7 +145,11 @@ def acct_period(aid, preset):
     try:
         d = api("/act_%s/insights" % aid, {"date_preset": preset, "fields": FIELDS, "level": "account"})
         data = d.get("data", [])
-        return metrics(data[0]) if data else metrics({})
+        if not data:
+            return metrics({})
+        if preset == "last_month":   # rekam rincian kandidat contact utk verifikasi
+            _contact_dbg[aid] = actbreak(data[0].get("actions"), CONTACT_KEYS)
+        return metrics(data[0])
     except Exception:
         return metrics({})
 
@@ -236,6 +271,9 @@ def main():
         json.dump(out, f, ensure_ascii=False)
     with open(os.path.join(OUTDIR, "_debug_actions.json"), "w") as f:
         json.dump(sorted(_seen), f, ensure_ascii=False, indent=2)
+    with open(os.path.join(OUTDIR, "_debug_contact.json"), "w") as f:
+        json.dump({ACC.get(k, {}).get("se", k): v for k, v in _contact_dbg.items()},
+                  f, ensure_ascii=False, indent=2, sort_keys=True)
     print("OK:", len(accounts), "akun ->", os.path.join(OUTDIR, "data.json"))
 
 
