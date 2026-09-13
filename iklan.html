@@ -132,14 +132,21 @@
     return '<div class="funnel">'+rows.map(function(r){var s=r[3]?'<small>'+r[3]+'</small>':'';return '<div class="frow"><span class="k"><span class="em">'+r[0]+'</span>'+r[1]+'</span><span class="v">'+r[2]+s+'</span></div>';}).join('')+'</div>';
   }
 
+  /* Peserta klaim Agustus 2026 — tab "Bulan Agustus" HANYA menampilkan nama-nama ini.
+     Sholeh1253 tembus tier tapi tidak diikutkan klaim (keputusan Branch Leader). */
+  var CLAIM_AGU=['Ikmal1298','Humam1300','syarif1309','Nadjalaxmi1297','FitriaPutri1296',
+                 'Kybernanta1294','FADHILFIKRI1310','Syahri1304','Dyah Annisa L','Sonya1305'];
+
   function renderPeriod(key){
-    var list=(DATA.accounts||[]).map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
+    var src=(DATA.accounts||[]);
+    if(key==='bulanlalu') src=src.filter(function(a){return CLAIM_AGU.indexOf(a.se)>-1;});
+    var list=src.map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
     list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
     var roas=tSpend?tValue/tSpend:0;
     var MI=(DATA.bulan_ini_label||'').split(' ')[0],ML=(DATA.bulan_lalu_label||'').split(' ')[0];
     var TT={harian:'Hari Ini',kemarin:'Kemarin',bulanan:'Bulan Ini'+(MI?' ('+MI+')':''),bulanlalu:'Bulan '+(ML||'Lalu')};
-    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini ('+(DATA.bulan_ini_label||'bulan berjalan')+') · per Sales Expert',bulanlalu:'Sebulan penuh ('+(DATA.bulan_lalu_label||'bulan lalu')+') · per Sales Expert'}[key];
+    var sub={harian:'Hari ini · per Sales Expert',kemarin:'Kemarin · per Sales Expert',bulanan:'Tanggal 1 s/d hari ini ('+(DATA.bulan_ini_label||'bulan berjalan')+') · per Sales Expert',bulanlalu:'Sebulan penuh ('+(DATA.bulan_lalu_label||'bulan lalu')+') · hanya '+CLAIM_AGU.length+' SE peserta klaim'}[key];
     var kpis='<div class="kpis">'+
       kpi('var(--brand)','Total Spend',rpC(tSpend),'seluruh SE')+
       kpi('var(--p-novia)','Total Contact',num(tContact),'lead / chat masuk')+
