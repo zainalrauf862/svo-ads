@@ -151,10 +151,20 @@
   }
   var MONTHS=[];
   function monthOf(key){for(var i=0;i<MONTHS.length;i++)if(MONTHS[i].key===key)return MONTHS[i];return null;}
+  /* Khusus Agustus 2026 — dipatok ke tahunnya, jangan cuma nama bulan, supaya
+     Agustus tahun berikutnya tidak ikut tersaring daftar peserta klaim. */
+  function isBulanKlaim(mo){return !!mo&&(mo.key===AGU||mo.label==='Agustus '+AGU.slice(0,4));}
+  /* Nama bulan saja, kecuali nama itu muncul di lebih dari satu tahun — baru tahunnya ikut,
+     supaya "Agustus 2026" dan "Agustus 2027" tidak jadi dua tab berlabel sama. */
+  function labelBulan(mo){
+    var nama=(mo.label||mo.key).split(' ')[0];
+    var kembar=MONTHS.filter(function(x){return (x.label||x.key).split(' ')[0]===nama;}).length>1;
+    return kembar?(mo.label||mo.key):nama;
+  }
   function vid(key){return 'v-'+String(key).replace(/[^A-Za-z0-9]+/g,'-');}
 
   function renderPeriod(key){
-    var mo=monthOf(key),isAgu=!!mo&&(mo.key===AGU||/^Agustus /.test(mo.label||''));
+    var mo=monthOf(key),isAgu=isBulanKlaim(mo);
     var filtered=isAgu&&AGU_CLAIM;
     var src=(DATA.accounts||[]);
     if(filtered) src=src.filter(function(a){return CLAIM_AGU.indexOf(a.se)>-1;});
@@ -165,7 +175,7 @@
     var roas=tSpend?tValue/tSpend:0;
     var TT,sub;
     if(mo){
-      TT='Bulan '+(mo.label||'').split(' ')[0];
+      TT='Bulan '+labelBulan(mo);
       sub=(mo.current?'Tanggal 1 s/d hari ini':'Sebulan penuh')+' ('+(mo.label||'')+') · '+
           (filtered?('hanya '+list.length+' SE peserta klaim'):(list.length+' SE, '+aktif+' ada spend'));
     }else{
@@ -231,7 +241,11 @@
 
   var DATA={accounts:[]};
   function boot(){
-    document.getElementById('updated').innerHTML='Terakhir diperbarui: <b>'+(DATA.updated||'—')+'</b> WIB · otomatis dari Meta API tiap ±30 menit';
+    var peringatan=DATA.gagal>0?' · <b style="color:var(--warn)">'+DATA.gagal+' panggilan ke Meta gagal, sebagian angka bisa kurang</b>':'';
+    document.getElementById('updated').innerHTML='Terakhir diperbarui: <b>'+(DATA.updated||'—')+'</b> WIB · otomatis dari Meta API tiap ±30 menit'+peringatan;
+    if(DATA.gagal>0){document.getElementById('liveState').textContent='SEBAGIAN GAGAL';
+      document.querySelector('.chip-info').style.color='var(--warn)';
+      document.querySelector('.chip-info .dot').style.background='var(--warn)';}
     MONTHS=monthsOf();
     /* Tab + section tiap bulan dibuat dinamis, terbaru dulu, disisipkan sebelum "Campaign Aktif". */
     var nav=document.getElementById('tabs'),views=document.getElementById('views');
@@ -240,7 +254,7 @@
       var b=document.createElement('button');
       b.className='tab';b.setAttribute('role','tab');b.setAttribute('aria-selected','false');
       b.dataset.view=mo.key;
-      b.innerHTML=(mo.current?'📆 ':'📅 ')+(mo.label||mo.key).split(' ')[0]+(mo.current?' (berjalan)':'');
+      b.innerHTML=(mo.current?'📆 ':'📅 ')+labelBulan(mo)+(mo.current?' (berjalan)':'');
       nav.insertBefore(b,tabCamp);
       var s=document.createElement('section');
       s.className='view';s.id=vid(mo.key);
@@ -278,8 +292,7 @@
     if(g){ /* tab Agustus: ganti antara peserta klaim saja vs semua SE */
       AGU_CLAIM=g.dataset.agu==='1';
       MONTHS.forEach(function(mo){
-        if(mo.key===AGU||/^Agustus /.test(mo.label||''))
-          document.getElementById(vid(mo.key)).innerHTML=renderPeriod(mo.key);
+        if(isBulanKlaim(mo)) document.getElementById(vid(mo.key)).innerHTML=renderPeriod(mo.key);
       });
       return;
     }

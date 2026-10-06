@@ -65,7 +65,7 @@ python3 /opt/svo-ads/fetch.py || echo "   (!) fetch pertama gagal — cek token/
 
 echo "[7/7] Pasang jadwal otomatis (tiap 30 menit)…"
 ( crontab -l 2>/dev/null | grep -v 'svo-ads/fetch.py' ; \
-  echo "*/30 * * * * /usr/bin/python3 /opt/svo-ads/fetch.py >/var/log/svo-ads.log 2>&1" ) | crontab -
+  echo "*/30 * * * * /usr/bin/flock -n /run/svo-ads.lock /usr/bin/python3 /opt/svo-ads/fetch.py >>/var/log/svo-ads.log 2>&1" ) | crontab -
 
 echo
 echo "==================================================="

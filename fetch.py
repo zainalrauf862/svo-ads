@@ -5,7 +5,7 @@ SVO Ads — tarik data Meta Ads semua akun -> /var/www/tim/data.json
 Dijalankan berkala (cron) di VPS. Token dibaca dari file token.txt (tidak pernah masuk kode).
 Stdlib only (tanpa pip).
 """
-import json, os, urllib.parse, urllib.request, datetime, calendar
+import json, os, sys, urllib.parse, urllib.request, datetime, calendar
 
 BASE = "https://graph.facebook.com/v21.0"
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,7 +25,7 @@ PERIODS = {"harian": "today", "kemarin": "yesterday"}
 # ditarik memakai time_range absolut, mulai dari bulan pertama program.
 BULAN_MULAI = (2026, 8)                      # Agustus 2026 = bulan pertama Program Subsidi Rekrutmen SE
 HIST_FILE = os.path.join(DIR, "history.json")  # cache bulan yang sudah tutup buku
-HIST_VER = 1
+HIST_VER = 2   # struktur entri cache berubah: {"until":..., "m":{...}}
 ID_BLN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
           "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values,purchase_roas"
@@ -55,6 +55,7 @@ CONTACT_KEYS = [
 ]
 _seen = set()
 _contact_dbg = {}   # {ad_account_id: {action_type: value}} untuk periode bulan lalu
+_gagal = [0]        # berapa panggilan insight yang gagal pada putaran ini
 
 
 def api(path, params):
@@ -154,6 +155,7 @@ def acct_period(aid, preset):
         data = d.get("data", [])
         return metrics(data[0]) if data else metrics({})
     except Exception:
+        _gagal[0] += 1
         return metrics({})
 
 
@@ -173,6 +175,7 @@ def acct_range(aid, since, until, dbg=False):
             _contact_dbg[aid] = actbreak(data[0].get("actions"), CONTACT_KEYS)
         return metrics(data[0]), True
     except Exception:
+        _gagal[0] += 1
         return metrics({}), False
 
 
@@ -193,6 +196,17 @@ def bulan_bulan(now):
         if m > 12:
             m, y = 1, y + 1
     return out
+
+
+def tulis_json(path, obj):
+    """Tulis atomik: isi file sementara lalu rename. Pembaca selalu melihat berkas utuh —
+    kalau proses mati di tengah, data.json lama tetap utuh, bukan terpotong."""
+    tmp = path + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(obj, f, ensure_ascii=False)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
 
 
 def load_hist():
@@ -297,6 +311,12 @@ def merge_by_se(accounts):
 
 def main():
     ids = list(ACC.keys()) or discover()
+    if not ids:
+        # accounts.json tak terbaca DAN /me/adaccounts gagal. Jangan sentuh apa pun:
+        # menimpa data.json di sini akan mengosongkan dashboard dan menghapus cache.
+        print("GAGAL: daftar akun iklan kosong. data.json & history.json tidak diubah.",
+              file=sys.stderr)
+        return 1
     tz = datetime.timezone(datetime.timedelta(hours=7))  # WIB
     now = datetime.datetime.now(tz)
     bulan = bulan_bulan(now)
@@ -314,14 +334,19 @@ def main():
         hb = hist.setdefault(aid, {})
         for b in bulan:
             k = b["key"]
-            if k in hidup or k not in hb:
+            ent = hb.get(k)
+            # Cache hanya dipakai bila bulannya sudah tutup buku DAN rentang tanggal entri
+            # cocok dengan yang diminta sekarang (menjaga dari entri separuh bulan yang beku).
+            segar = bool(ent) and ent.get("until") == b["until"]
+            if not b["current"] and k not in hidup and segar:
+                m = ent["m"]
+            else:
                 m, ok = acct_range(aid, b["since"], b["until"], dbg=(k == lalu))
                 if ok:
-                    hb[k] = m
-                elif k in hb:
-                    m = hb[k]             # API gagal: pakai nilai cache lama, jangan timpa
-            else:
-                m = hb[k]
+                    if not b["current"]:   # bulan berjalan masih separuh -> jangan di-cache
+                        hb[k] = {"until": b["until"], "m": m}
+                elif segar:
+                    m = ent["m"]           # API gagal: pakai nilai cache lama, jangan timpa
             per[k] = dict(m)              # salin: merge_by_se mengubah dict di tempat
         per["bulanan"] = dict(per[ini])   # alias lama, biar dashboard versi lama tetap jalan
         per["bulanlalu"] = dict(per[lalu])
@@ -337,10 +362,9 @@ def main():
     for k in [k for k in hist if k != "_v" and k not in ids]:
         hist.pop(k)                       # buang akun yang sudah tidak dipakai
     try:
-        with open(HIST_FILE, "w") as f:
-            json.dump(hist, f, ensure_ascii=False)
-    except Exception:
-        pass
+        tulis_json(HIST_FILE, hist)
+    except Exception as e:
+        print("PERINGATAN: history.json gagal ditulis (%s)" % e, file=sys.stderr)
 
     accounts = merge_by_se(accounts)
     os.makedirs(OUTDIR, exist_ok=True)
@@ -349,18 +373,20 @@ def main():
         "bulan_ini_label": [b["label"] for b in bulan if b["key"] == ini][0],
         "bulan_lalu_label": [b["label"] for b in bulan if b["key"] == lalu][0],
         "months": bulan,
+        "gagal": _gagal[0],   # >0 artinya ada panggilan API gagal -> angka bisa kurang
         "accounts": accounts,
     }
-    with open(os.path.join(OUTDIR, "data.json"), "w") as f:
-        json.dump(out, f, ensure_ascii=False)
-    with open(os.path.join(OUTDIR, "_debug_actions.json"), "w") as f:
-        json.dump(sorted(_seen), f, ensure_ascii=False, indent=2)
-    with open(os.path.join(OUTDIR, "_debug_contact.json"), "w") as f:
-        json.dump({ACC.get(k, {}).get("se", k): v for k, v in _contact_dbg.items()},
-                  f, ensure_ascii=False, indent=2, sort_keys=True)
+    tulis_json(os.path.join(OUTDIR, "data.json"), out)
+    tulis_json(os.path.join(OUTDIR, "_debug_actions.json"), sorted(_seen))
+    tulis_json(os.path.join(OUTDIR, "_debug_contact.json"),
+               {ACC.get(k, {}).get("se", k): v for k, v in _contact_dbg.items()})
     print("OK:", len(accounts), "SE ·", len(bulan), "bulan (",
           ", ".join(b["label"] for b in bulan), ") ->", os.path.join(OUTDIR, "data.json"))
+    if _gagal[0]:
+        print("PERINGATAN: %d panggilan insight gagal — sebagian angka bisa kurang."
+              % _gagal[0], file=sys.stderr)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)
