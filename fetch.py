@@ -5,7 +5,7 @@ SVO Ads — tarik data Meta Ads semua akun -> /var/www/tim/data.json
 Dijalankan berkala (cron) di VPS. Token dibaca dari file token.txt (tidak pernah masuk kode).
 Stdlib only (tanpa pip).
 """
-import json, os, urllib.parse, urllib.request, datetime
+import json, os, urllib.parse, urllib.request, datetime, calendar
 
 BASE = "https://graph.facebook.com/v21.0"
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,8 +17,15 @@ try:
 except Exception:
     ACC = {}
 
-PERIODS = {"harian": "today", "kemarin": "yesterday",
-           "bulanan": "this_month", "bulanlalu": "last_month"}
+# Periode harian memakai preset relatif (selalu "sekarang").
+PERIODS = {"harian": "today", "kemarin": "yesterday"}
+
+# Periode bulanan TIDAK boleh pakai preset relatif (this_month/last_month): begitu
+# ganti bulan, data bulan lama ikut hilang dari dashboard. Jadi tiap bulan kalender
+# ditarik memakai time_range absolut, mulai dari bulan pertama program.
+BULAN_MULAI = (2026, 8)                      # Agustus 2026 = bulan pertama Program Subsidi Rekrutmen SE
+HIST_FILE = os.path.join(DIR, "history.json")  # cache bulan yang sudah tutup buku
+HIST_VER = 1
 ID_BLN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
           "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 FIELDS = "spend,impressions,reach,frequency,clicks,inline_link_clicks,ctr,cpc,actions,action_values,purchase_roas"
@@ -145,13 +152,58 @@ def acct_period(aid, preset):
     try:
         d = api("/act_%s/insights" % aid, {"date_preset": preset, "fields": FIELDS, "level": "account"})
         data = d.get("data", [])
-        if not data:
-            return metrics({})
-        if preset == "last_month":   # rekam rincian kandidat contact utk verifikasi
-            _contact_dbg[aid] = actbreak(data[0].get("actions"), CONTACT_KEYS)
-        return metrics(data[0])
+        return metrics(data[0]) if data else metrics({})
     except Exception:
         return metrics({})
+
+
+def acct_range(aid, since, until, dbg=False):
+    """Insight satu rentang tanggal absolut (dipakai untuk tiap bulan kalender).
+    Kembalikan (metrik, sukses). sukses=False berarti API gagal — angka nol di sini
+    TIDAK boleh masuk cache, supaya bulan itu dicoba lagi putaran berikutnya.
+    data kosong (akun belum ada di bulan itu) tetap sukses: nol-nya memang benar."""
+    try:
+        d = api("/act_%s/insights" % aid, {
+            "time_range": json.dumps({"since": since, "until": until}),
+            "fields": FIELDS, "level": "account"})
+        data = d.get("data", [])
+        if not data:
+            return metrics({}), True
+        if dbg:   # rekam rincian kandidat contact utk verifikasi
+            _contact_dbg[aid] = actbreak(data[0].get("actions"), CONTACT_KEYS)
+        return metrics(data[0]), True
+    except Exception:
+        return metrics({}), False
+
+
+def bulan_bulan(now):
+    """Daftar bulan kalender BULAN_MULAI s/d bulan berjalan (urut lama -> baru)."""
+    out = []
+    y, m = BULAN_MULAI
+    while (y, m) <= (now.year, now.month):
+        berjalan = (y, m) == (now.year, now.month)
+        until = now.strftime("%Y-%m-%d") if berjalan else \
+                "%04d-%02d-%02d" % (y, m, calendar.monthrange(y, m)[1])
+        out.append({"key": "%04d-%02d" % (y, m),
+                    "label": "%s %d" % (ID_BLN[m - 1], y),
+                    "since": "%04d-%02d-01" % (y, m),
+                    "until": until,
+                    "current": berjalan})
+        m += 1
+        if m > 12:
+            m, y = 1, y + 1
+    return out
+
+
+def load_hist():
+    """Cache bulan-bulan lama supaya tidak ditarik ulang tiap 30 menit selamanya."""
+    try:
+        h = json.load(open(HIST_FILE))
+        if h.get("_v") == HIST_VER:
+            return h
+    except Exception:
+        pass
+    return {"_v": HIST_VER}
 
 
 def campaign_status(aid):
@@ -245,26 +297,58 @@ def merge_by_se(accounts):
 
 def main():
     ids = list(ACC.keys()) or discover()
+    tz = datetime.timezone(datetime.timedelta(hours=7))  # WIB
+    now = datetime.datetime.now(tz)
+    bulan = bulan_bulan(now)
+    ini = bulan[-1]["key"]
+    lalu = bulan[-2]["key"] if len(bulan) > 1 else ini
+    # Bulan berjalan + bulan lalu selalu ditarik ulang (angka bulan lalu masih bisa
+    # bergerak beberapa hari karena attribution window). Bulan sebelumnya dari cache.
+    hidup = {ini, lalu}
+    hist = load_hist()
+
     accounts = []
     for aid in ids:
         info = ACC.get(aid, {})
+        per = {k: acct_period(aid, v) for k, v in PERIODS.items()}
+        hb = hist.setdefault(aid, {})
+        for b in bulan:
+            k = b["key"]
+            if k in hidup or k not in hb:
+                m, ok = acct_range(aid, b["since"], b["until"], dbg=(k == lalu))
+                if ok:
+                    hb[k] = m
+                elif k in hb:
+                    m = hb[k]             # API gagal: pakai nilai cache lama, jangan timpa
+            else:
+                m = hb[k]
+            per[k] = dict(m)              # salin: merge_by_se mengubah dict di tempat
+        per["bulanan"] = dict(per[ini])   # alias lama, biar dashboard versi lama tetap jalan
+        per["bulanlalu"] = dict(per[lalu])
         accounts.append({
             "id": aid,
             "se": info.get("se") or account_name(aid) or aid,
             "de": info.get("de", ""),
             "produk": info.get("produk", ""),
-            "periods": {k: acct_period(aid, v) for k, v in PERIODS.items()},
+            "periods": per,
             "campaigns": campaigns_today(aid),
         })
+
+    for k in [k for k in hist if k != "_v" and k not in ids]:
+        hist.pop(k)                       # buang akun yang sudah tidak dipakai
+    try:
+        with open(HIST_FILE, "w") as f:
+            json.dump(hist, f, ensure_ascii=False)
+    except Exception:
+        pass
+
     accounts = merge_by_se(accounts)
     os.makedirs(OUTDIR, exist_ok=True)
-    tz = datetime.timezone(datetime.timedelta(hours=7))  # WIB
-    now = datetime.datetime.now(tz)
-    prev_end = now.replace(day=1) - datetime.timedelta(days=1)  # hari terakhir bulan lalu
     out = {
         "updated": now.strftime("%Y-%m-%d %H:%M"),
-        "bulan_ini_label": ID_BLN[now.month - 1] + " " + str(now.year),
-        "bulan_lalu_label": ID_BLN[prev_end.month - 1] + " " + str(prev_end.year),
+        "bulan_ini_label": [b["label"] for b in bulan if b["key"] == ini][0],
+        "bulan_lalu_label": [b["label"] for b in bulan if b["key"] == lalu][0],
+        "months": bulan,
         "accounts": accounts,
     }
     with open(os.path.join(OUTDIR, "data.json"), "w") as f:
@@ -274,7 +358,8 @@ def main():
     with open(os.path.join(OUTDIR, "_debug_contact.json"), "w") as f:
         json.dump({ACC.get(k, {}).get("se", k): v for k, v in _contact_dbg.items()},
                   f, ensure_ascii=False, indent=2, sort_keys=True)
-    print("OK:", len(accounts), "akun ->", os.path.join(OUTDIR, "data.json"))
+    print("OK:", len(accounts), "SE ·", len(bulan), "bulan (",
+          ", ".join(b["label"] for b in bulan), ") ->", os.path.join(OUTDIR, "data.json"))
 
 
 if __name__ == "__main__":
