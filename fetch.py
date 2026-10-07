@@ -106,6 +106,34 @@ def actvalf(items, keys):
     return 0.0
 
 
+def actpair(items, vals, keys):
+    """Ambil JUMLAH dan NILAI dari action_type yang SAMA.
+
+    Sebelumnya jumlah diambil dari `actions` dan nilai dari `action_values` lewat dua panggilan
+    actval() terpisah. Kedua array itu tidak selalu memuat alias yang sama, sehingga jumlah bisa
+    terambil dari satu alias sementara nilainya dari alias lain — pasangan yang tidak sepadan.
+    Kasus nyata: SVO BAYU ADITIA - 01 September 2026 terbaca 146 order senilai Rp13.860.000,
+    padahal Rp13.860.000 tepat 14 x Rp990.000 dan ROAS yang dilaporkan Meta 1,19 hanya cocok
+    dengan 14 order. Karena itu alias yang ada di KEDUA array selalu diutamakan."""
+    ia, iv = {}, {}
+    for x in (items or []):
+        t = x.get("action_type")
+        if t:
+            _seen.add(t)
+            ia.setdefault(t, int(round(fnum(x.get("value")))))
+    for x in (vals or []):
+        t = x.get("action_type")
+        if t:
+            iv.setdefault(t, fnum(x.get("value")))
+    for k in keys:                      # alias yang jumlah DAN nilainya sama-sama ada
+        if k in ia and k in iv:
+            return ia[k], int(round(iv[k]))
+    for k in keys:                      # tidak ada pasangan utuh -> apa adanya
+        if k in ia:
+            return ia[k], int(round(iv.get(k, 0)))
+    return 0, 0
+
+
 def actbreak(items, keys):
     """Nilai tiap action_type kandidat yang benar-benar ada (untuk debug & max)."""
     idx = {}
@@ -126,12 +154,14 @@ def actmax(items, keys):
 def metrics(row):
     a = row.get("actions"); av = row.get("action_values")
     spend = fnum(row.get("spend"))
-    order = actval(a, MAP["purchase"])
-    value = actval(av, MAP["purchase"])
+    order, value = actpair(a, av, MAP["purchase"])
     klik = int(fnum(row.get("inline_link_clicks"))) or actval(a, ["link_click"])
     roas = round(actvalf(row.get("purchase_roas"), MAP["purchase"]), 2)
     if not roas and spend:
         roas = round(value / spend, 2)
+    if order and value and (value / order) < 300000:
+        print("PERINGATAN mutu data: %d order senilai %d -> hanya %d per order, periksa alias event."
+              % (order, value, value // order), file=sys.stderr)
     return {
         "spend": int(round(spend)),
         "impresi": int(fnum(row.get("impressions"))),
