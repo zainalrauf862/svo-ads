@@ -141,6 +141,11 @@
                  'Kybernanta1294','FADHILFIKRI1310','Syahri1304','Dyah Annisa L','Sonya1305'];
   var AGU_CLAIM=true;   /* tab Agustus: true = hanya peserta klaim, false = semua SE */
 
+  /* SE yang BELUM ikut program subsidi pada bulan tertentu -> tidak ditampilkan di tab bulan itu.
+     Dikunci per bulan kalender (YYYY-MM), bukan per posisi tab, supaya tidak ikut bergeser
+     saat bulan berganti. Saefllh1318, JUSTIN1301, didaw1328 baru ikut subsidi sejak Oktober 2026. */
+  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328']};
+
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
   function monthsOf(){
     if(DATA.months&&DATA.months.length) return DATA.months.slice();
@@ -151,9 +156,18 @@
   }
   var MONTHS=[];
   function monthOf(key){for(var i=0;i<MONTHS.length;i++)if(MONTHS[i].key===key)return MONTHS[i];return null;}
-  /* Khusus Agustus 2026 — dipatok ke tahunnya, jangan cuma nama bulan, supaya
-     Agustus tahun berikutnya tidak ikut tersaring daftar peserta klaim. */
-  function isBulanKlaim(mo){return !!mo&&(mo.key===AGU||mo.label==='Agustus '+AGU.slice(0,4));}
+  /* Kunci kanonik "YYYY-MM" untuk sebuah bulan. Pada data.json versi lama kuncinya masih
+     'bulanan'/'bulanlalu', jadi diturunkan dari labelnya ("September 2026" -> "2026-09").
+     Semua aturan per bulan (peserta klaim, luar program) dipatok ke kunci ini. */
+  var NAMA_BLN=['Januari','Februari','Maret','April','Mei','Juni',
+                'Juli','Agustus','September','Oktober','November','Desember'];
+  function kunciBulan(mo){
+    if(!mo) return null;
+    if(/^\d{4}-\d{2}$/.test(mo.key||'')) return mo.key;
+    var p=(mo.label||'').split(' '),i=NAMA_BLN.indexOf(p[0]);
+    return (i>-1&&p[1])?(p[1]+'-'+('0'+(i+1)).slice(-2)):null;
+  }
+  function isBulanKlaim(mo){return kunciBulan(mo)===AGU;}
   /* Nama bulan saja, kecuali nama itu muncul di lebih dari satu tahun — baru tahunnya ikut,
      supaya "Agustus 2026" dan "Agustus 2027" tidak jadi dua tab berlabel sama. */
   function labelBulan(mo){
@@ -166,8 +180,10 @@
   function renderPeriod(key){
     var mo=monthOf(key),isAgu=isBulanKlaim(mo);
     var filtered=isAgu&&AGU_CLAIM;
+    var luar=(mo&&LUAR_PROGRAM[kunciBulan(mo)])||[];
     var src=(DATA.accounts||[]);
     if(filtered) src=src.filter(function(a){return CLAIM_AGU.indexOf(a.se)>-1;});
+    else if(luar.length) src=src.filter(function(a){return luar.indexOf(a.se)<0;});
     var list=src.map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
     var aktif=list.filter(function(x){return x.m.spend>0;}).length;
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
@@ -177,7 +193,8 @@
     if(mo){
       TT='Bulan '+labelBulan(mo);
       sub=(mo.current?'Tanggal 1 s/d hari ini':'Sebulan penuh')+' ('+(mo.label||'')+') · '+
-          (filtered?('hanya '+list.length+' SE peserta klaim'):(list.length+' SE, '+aktif+' ada spend'));
+          (filtered?('hanya '+list.length+' SE peserta klaim'):(list.length+' SE, '+aktif+' ada spend'))+
+          (luar.length&&!filtered?' · '+luar.length+' SE belum ikut program bulan ini, tidak dihitung':'');
     }else{
       TT=key==='harian'?'Hari Ini':'Kemarin';
       sub=(key==='harian'?'Hari ini':'Kemarin')+' · '+list.length+' SE, '+aktif+' ada spend';
