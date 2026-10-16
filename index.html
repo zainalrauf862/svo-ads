@@ -271,7 +271,7 @@
       </div>
       <div class="kpi" style="--accent:var(--warn)">
         <div class="lbl">Sisa Periode Rekrutmen</div>
-        <div class="val">48<small> hari</small></div>
+        <div class="val" id="sisaHari">—<small> hari</small></div>
         <div class="sub">berakhir 31 Okt 2026</div>
       </div>
     </div>
@@ -412,7 +412,7 @@
       </div>
       <div class="kpi" style="--accent:var(--warn)">
         <div class="lbl">Belum Submit</div>
-        <div class="val">13<small> DE</small></div>
+        <div class="val" id="belumSubmit">—<small> DE</small></div>
         <div class="sub">perlu di-follow up</div>
       </div>
     </div>
@@ -503,6 +503,19 @@
     'DAUS1615':[['Jessy Ayu Rahardin Al Fath','13D4Xsg7NuaFzdz8CtqlpYi35gkgU8v1L',1,'']],
     'RENALDO1368':[['Bayu','1h4HIfiRn_WnSGbXTkGgVR74ecnCJzOn7',0,'']]
   };
+  /* Dua angka ini dulu ditulis tetap di HTML dan sempat basi berminggu-minggu
+     (tertulis 48 hari padahal tinggal 15; 13 DE padahal 11). Sekarang dihitung sendiri. */
+  (function(){
+    var akhir = new Date(2026, 9, 31);               /* 31 Oktober 2026 */
+    var kini = new Date(); kini.setHours(0,0,0,0);
+    var sisa = Math.max(0, Math.round((akhir - kini) / 86400000));
+    var el = document.getElementById('sisaHari');
+    if (el) el.innerHTML = (sisa ? sisa : 'Berakhir') + '<small> hari</small>';
+    var belum = deIds.length - Object.keys(deSE).length;
+    var eb = document.getElementById('belumSubmit');
+    if (eb) eb.innerHTML = belum + '<small> DE</small>';
+  })();
+
   var deList = document.getElementById('deList');
   /* urut: yang sudah submit di atas (SE terbanyak dulu), lalu sisanya alfabetis */
   var deSorted = deIds.slice().sort(function(a,b){
