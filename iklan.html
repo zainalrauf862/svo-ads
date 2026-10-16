@@ -143,8 +143,12 @@
 
   /* SE yang BELUM ikut program subsidi pada bulan tertentu -> tidak ditampilkan di tab bulan itu.
      Dikunci per bulan kalender (YYYY-MM), bukan per posisi tab, supaya tidak ikut bergeser
-     saat bulan berganti. Saefllh1318, JUSTIN1301, didaw1328 baru ikut subsidi sejak Oktober 2026. */
-  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328']};
+     saat bulan berganti.
+     - Saefllh1318, JUSTIN1301, didaw1328: baru ikut subsidi sejak Oktober 2026.
+     - FebrianaEkaPutri1315, ALKAUTSAR1329: belanja September belum mencapai Rp10 juta,
+       atas keputusan Branch Leader diikutkan mulai Oktober saja. */
+  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328',
+                              'FebrianaEkaPutri1315','ALKAUTSAR1329']};
 
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
   function monthsOf(){
