@@ -326,6 +326,8 @@ def merge_by_se(accounts):
                 dst = m["periods"].setdefault(pk, {})
                 for kk in SUM_KEYS:
                     dst[kk] = dst.get(kk, 0) + pv.get(kk, 0)
+                if pv.get("gagal"):        # satu akun gagal ditarik -> total SE ikut tidak lengkap
+                    dst["gagal"] = 1
             m["campaigns"] = (m.get("campaigns") or []) + (a.get("campaigns") or [])
     out = []
     for k in order:
@@ -377,6 +379,10 @@ def main():
                         hb[k] = {"until": b["until"], "m": m}
                 elif segar:
                     m = ent["m"]           # API gagal: pakai nilai cache lama, jangan timpa
+                else:
+                    # API gagal dan tak ada cache: angka nol ini BUKAN belanja nol. Ditandai
+                    # supaya dashboard tidak menganggapnya "belanja di bawah ambang".
+                    m = dict(m, gagal=1)
             per[k] = dict(m)              # salin: merge_by_se mengubah dict di tempat
         per["bulanan"] = dict(per[ini])   # alias lama, biar dashboard versi lama tetap jalan
         per["bulanlalu"] = dict(per[lalu])

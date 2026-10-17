@@ -144,11 +144,16 @@
   /* SE yang BELUM ikut program subsidi pada bulan tertentu -> tidak ditampilkan di tab bulan itu.
      Dikunci per bulan kalender (YYYY-MM), bukan per posisi tab, supaya tidak ikut bergeser
      saat bulan berganti.
-     - Saefllh1318, JUSTIN1301, didaw1328: baru ikut subsidi sejak Oktober 2026.
-     - FebrianaEkaPutri1315, ALKAUTSAR1329: belanja September belum mencapai Rp10 juta,
-       atas keputusan Branch Leader diikutkan mulai Oktober saja. */
-  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328',
-                              'FebrianaEkaPutri1315','ALKAUTSAR1329']};
+     - Saefllh1318, JUSTIN1301, didaw1328: baru ikut subsidi sejak Oktober 2026. */
+  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328']};
+
+  /* Aturan Branch Leader (17 Okt 2026): SE yang belanja September-nya tidak mencapai Rp10 juta
+     tidak dimunculkan di September; ia dihitung ikut mulai Oktober. Berlaku otomatis untuk
+     SE mana pun, termasuk SE baru yang akun iklannya baru dipetakan.
+     (Dulu FebrianaEkaPutri1315 & ALKAUTSAR1329 dikeluarkan manual. ALKAUTSAR1329 ternyata
+     terbaca Rp0 karena akunnya gagal ditarik; per 17 Okt belanja Septembernya Rp29,3 jt,
+     jadi kini tampil di September.) */
+  var MIN_BELANJA={'2026-09':10000000};
 
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
   function monthsOf(){
@@ -185,10 +190,15 @@
     var mo=monthOf(key),isAgu=isBulanKlaim(mo);
     var filtered=isAgu&&AGU_CLAIM;
     var luar=(mo&&LUAR_PROGRAM[kunciBulan(mo)])||[];
+    var minB=(mo&&MIN_BELANJA[kunciBulan(mo)])||0;
     var src=(DATA.accounts||[]);
     if(filtered) src=src.filter(function(a){return CLAIM_AGU.indexOf(a.se)>-1;});
     else if(luar.length) src=src.filter(function(a){return luar.indexOf(a.se)<0;});
     var list=src.map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
+    var nKecil=0;
+    /* SE yang datanya gagal ditarik (m.gagal) TIDAK disaring: angka nolnya bukan belanja kecil. */
+    if(minB&&!filtered){var n0=list.length;list=list.filter(function(x){return x.m.spend>=minB||x.m.gagal;});nKecil=n0-list.length;}
+    var nGagal=list.filter(function(x){return x.m.gagal;}).length;
     var aktif=list.filter(function(x){return x.m.spend>0;}).length;
     var tSpend=0,tContact=0,tValue=0,tOrder=0;
     list.forEach(function(x){tSpend+=x.m.spend;tContact+=x.m.contact;tValue+=x.m.value;tOrder+=x.m.order;});
@@ -198,7 +208,9 @@
       TT='Bulan '+labelBulan(mo);
       sub=(mo.current?'Tanggal 1 s/d hari ini':'Sebulan penuh')+' ('+(mo.label||'')+') · '+
           (filtered?('hanya '+list.length+' SE peserta klaim'):(list.length+' SE, '+aktif+' ada spend'))+
-          (luar.length&&!filtered?' · '+luar.length+' SE belum ikut program bulan ini, tidak dihitung':'');
+          (luar.length&&!filtered?' · '+luar.length+' SE belum ikut program bulan ini, tidak dihitung':'')+
+          (nKecil?' · '+nKecil+' SE belanja di bawah Rp'+(minB/1e6)+' jt, ikut mulai bulan berikutnya':'')+
+          (nGagal?' · <b style="color:var(--warn)">'+nGagal+' SE datanya gagal ditarik, angkanya belum lengkap</b>':'');
     }else{
       TT=key==='harian'?'Hari Ini':'Kemarin';
       sub=(key==='harian'?'Hari ini':'Kemarin')+' · '+list.length+' SE, '+aktif+' ada spend';
@@ -213,7 +225,7 @@
       kpi('var(--warn)','ROAS Tim',dec(roas,2)+'×','target sehat ≥ 2×')+'</div>';
     if(!list.length) return kpis+'<div class="state"><h4>Belum ada akun</h4><p>Tambahkan akun iklan SE di accounts.json pada server.</p></div>';
     var items=list.map(function(x,i){
-      var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'');
+      var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'')+(m.gagal?' · <b style="color:var(--warn)">data gagal ditarik</b>':'');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
         '<span class="metablk"><span class="nm">'+a.se+'<span class="sub">'+desub+'</span></span></span>'+

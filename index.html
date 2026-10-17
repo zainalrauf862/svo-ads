@@ -234,7 +234,7 @@
     </div>
     <nav class="areaswitch"><a href="index.html" class="on">📋 Rekrutmen SE</a><a href="iklan.html">📣 Iklan Tim SE</a></nav>
     <div class="top-spacer"></div>
-    <span class="chip-info"><span class="dot" style="background:var(--good)"></span>Data 14 Sep 2026</span>
+    <span class="chip-info"><span class="dot" style="background:var(--good)"></span>Data <span id="chipTgl">—</span></span>
     <button class="theme-btn" id="themeToggle" aria-label="Ganti tema">🌙</button>
   </div>
 </header>
@@ -243,7 +243,7 @@
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-view="rekrut">📥 Perekrutan</button>
     <button class="tab" role="tab" aria-selected="false" data-view="hasil">📊 Hasil &amp; Performa</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="de">👥 DE &amp; Tim SE <span class="tnum">27</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-view="de">👥 DE &amp; Tim SE <span class="tnum nDE">—</span></button>
   </nav>
 
   <!-- ============ VIEW 1: PEREKRUTAN ============ -->
@@ -256,17 +256,17 @@
     <div class="kpis">
       <div class="kpi" style="--accent:var(--brand)">
         <div class="lbl">SE Ber-ID Globemerce</div>
-        <div class="val">25<small> / 50</small></div>
+        <div class="val"><span id="kId">—</span><small> / 50</small></div>
         <div class="sub">sudah terdaftar &amp; aktif</div>
       </div>
       <div class="kpi" style="--accent:var(--p-dvn)">
         <div class="lbl">Sisa Target</div>
-        <div class="val">25</div>
+        <div class="val" id="kSisa">—</div>
         <div class="sub">anggota baru dibutuhkan</div>
       </div>
       <div class="kpi" style="--accent:var(--p-novia)">
         <div class="lbl">Total DE</div>
-        <div class="val">27<small> DE</small></div>
+        <div class="val"><span class="nDE">—</span><small> DE</small></div>
         <div class="sub">terdaftar di Drive</div>
       </div>
       <div class="kpi" style="--accent:var(--warn)">
@@ -281,16 +281,16 @@
         <h3>Corong Rekrutmen (Recruitment Funnel)</h3>
         <p class="csub">Folder SE masuk → ada CV/portofolio → punya ID Globemerce → lengkap</p>
         <div style="text-align:center;padding:4px 0 14px">
-          <div style="font-size:36px;font-weight:780;letter-spacing:-.02em;line-height:1">26</div>
-          <div style="font-size:12.5px;color:var(--muted);margin-top:2px">kandidat masuk · dari 14 DE</div>
+          <div style="font-size:36px;font-weight:780;letter-spacing:-.02em;line-height:1" class="nKand">—</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:2px">kandidat masuk · dari <span class="nSubmit">—</span> DE</div>
         </div>
         <table class="ref"><tbody>
-          <tr><td>📥 Kandidat SE terdata</td><td style="text-align:right"><b>31</b></td></tr>
-          <tr><td>📄 Sudah ada CV / portofolio</td><td style="text-align:right"><b>28</b></td></tr>
-          <tr><td>🆔 Punya ID Globemerce aktif</td><td style="text-align:right"><b>25</b></td></tr>
-          <tr><td>✅ Lengkap (CV + ID)</td><td style="text-align:right"><b>20</b></td></tr>
+          <tr><td>📥 Kandidat SE terdata</td><td style="text-align:right"><b class="nKand">—</b></td></tr>
+          <tr><td>📄 Sudah ada CV / portofolio</td><td style="text-align:right"><b class="nCV">—</b></td></tr>
+          <tr><td>🆔 Punya ID Globemerce aktif</td><td style="text-align:right"><b class="nID">—</b></td></tr>
+          <tr><td>✅ Lengkap (CV + ID)</td><td style="text-align:right"><b class="nLengkap">—</b></td></tr>
         </tbody></table>
-        <p style="font-size:11.5px;color:var(--muted);margin-top:10px">Terverifikasi silang Drive ↔ Globemerce, 14 Sep 2026. Belum lengkap: <b>Nabila</b>, <b>Mitta</b>, <b>Fandi</b> ada CV tapi belum ID · <b>Fitria</b> sudah ID tapi CV belum · <b>Gilang</b> &amp; <b>Febriana</b> belum keduanya.</p>
+        <p style="font-size:11.5px;color:var(--muted);margin-top:10px">Terverifikasi silang Drive ↔ Globemerce, <span class="tglVerif">—</span>. <span id="belumLengkap"></span></p>
       </div>
       <div class="card ring-card">
         <div>
@@ -298,22 +298,22 @@
           <div class="ring">
             <svg viewBox="0 0 120 120" width="150" height="150">
               <circle cx="60" cy="60" r="52" fill="none" stroke="var(--grid)" stroke-width="12"/>
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--brand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="189.5" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--brand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)" id="ringArc"/>
             </svg>
-            <div class="cx"><b>50%</b><span>25 dari 50</span></div>
+            <div class="cx"><b id="ringPct">—</b><span><span class="nID">—</span> dari 50</span></div>
           </div>
         </div>
         <div class="ring-legend">
-          <div class="r-row"><span class="k">Kandidat SE terdata</span><b>31</b></div>
-          <div class="r-row"><span class="k">Sudah ber-ID Globemerce</span><b>25</b></div>
-          <div class="r-row"><span class="k">Sisa target</span><b>25</b></div>
+          <div class="r-row"><span class="k">Kandidat SE terdata</span><b class="nKand">—</b></div>
+          <div class="r-row"><span class="k">Sudah ber-ID Globemerce</span><b class="nID">—</b></div>
+          <div class="r-row"><span class="k">Sisa target</span><b class="nSisa">—</b></div>
         </div>
       </div>
     </div>
 
     <div class="note">
       <span>💡</span>
-      <div><b>Cara kerja:</b> <b>Kandidat SE (31)</b> &amp; status <b>CV (28)</b> ditarik dari Drive; status <b>ID Globemerce (25)</b> dicek langsung dari akun SVO Globemerce (Group Downline Detail). "Ber-ID" = SE sudah punya User ID Globemerce aktif. <b>Perlu ditindak:</b> Mitta, Fandi, Maharani, Jessy (CV ✓, ID belum) · Fitria (ID ✓, CV belum) · Gilang &amp; Bayu/RENALDO1368 (belum keduanya).</div>
+      <div><b>Cara kerja:</b> <b>Kandidat SE (<span class="nKand">—</span>)</b> &amp; status <b>CV (<span class="nCV">—</span>)</b> ditarik dari Drive; status <b>ID Globemerce (<span class="nID">—</span>)</b> dicek langsung dari akun SVO Globemerce (Group Downline Detail). "Ber-ID" = SE sudah punya User ID Globemerce aktif. <b>Perlu ditindak:</b> <span id="perluTindak">—</span></div>
     </div>
   </section>
 
@@ -391,24 +391,24 @@
   <section class="view" id="v-de">
     <div class="view-head">
       <h2>DE &amp; Tim SE</h2>
-      <p>27 DE terdaftar · klik tiap DE untuk lihat SE yang direkrut, CV, portofolio &amp; catatan</p>
+      <p><span class="nDE">—</span> DE terdaftar · klik tiap DE untuk lihat SE yang direkrut, CV, portofolio &amp; catatan</p>
     </div>
 
     <div class="kpis">
       <div class="kpi" style="--accent:var(--brand)">
         <div class="lbl">Total DE</div>
-        <div class="val">27</div>
+        <div class="val nDE">—</div>
         <div class="sub">folder aktif di Drive</div>
       </div>
       <div class="kpi" style="--accent:var(--good)">
         <div class="lbl">Sudah Submit SE</div>
-        <div class="val">16<small> / 27</small></div>
+        <div class="val"><span class="nSubmit">—</span><small> / <span class="nDE">—</span></small></div>
         <div class="sub">DE sudah kirim kandidat</div>
       </div>
       <div class="kpi" style="--accent:var(--p-novia)">
         <div class="lbl">Total SE Terkumpul</div>
-        <div class="val">31<small> SE</small></div>
-        <div class="sub">28 ada CV · 25 punya ID Globemerce</div>
+        <div class="val"><span class="nKand">—</span><small> SE</small></div>
+        <div class="sub"><span class="nCV">—</span> ada CV · <span class="nID">—</span> punya ID Globemerce</div>
       </div>
       <div class="kpi" style="--accent:var(--warn)">
         <div class="lbl">Belum Submit</div>
@@ -425,11 +425,11 @@
 
     <div class="note">
       <span>💡</span>
-      <div><b>Cara kerja:</b> Daftar DE &amp; SE ini otomatis mengikuti folder di Drive "PROGRAM REKRUTMEN SE 2026". Tiap DE submit SE sebagai sub-folder (berisi CV &amp; portofolio) — klik DE untuk lihat SE-nya, status CV &amp; ID Globemerce, lalu <b>Buka folder</b> untuk buka berkasnya. Update terakhir: 14 Sep 2026 (verifikasi silang Drive ↔ Globemerce).</div>
+      <div><b>Cara kerja:</b> Daftar DE &amp; SE ini otomatis mengikuti folder di Drive "PROGRAM REKRUTMEN SE 2026". Tiap DE submit SE sebagai sub-folder (berisi CV &amp; portofolio) — klik DE untuk lihat SE-nya, status CV &amp; ID Globemerce, lalu <b>Buka folder</b> untuk buka berkasnya. Update terakhir: <span class="tglVerif">—</span> (verifikasi silang Drive ↔ Globemerce).</div>
     </div>
   </section>
 
-  <p class="foot">Dashboard Program Subsidi Rekrutmen SE · SVO Yogyakarta · data per 14 Sep 2026 (Drive ↔ Globemerce)</p>
+  <p class="foot">Dashboard Program Subsidi Rekrutmen SE · SVO Yogyakarta · data per <span id="footTgl">—</span> (Drive ↔ Globemerce)</p>
 </div>
 
 <script>
@@ -484,7 +484,8 @@
     'ZAINAL1022':'1eH5eIDlNB54B2AAftrxW7Su57QaRCRVo'
   };
   /* SE yang sudah disubmit tiap DE: [nama SE, folderId, adaCV(1/0), idGlobemerce('' bila belum)] */
-  /* Terverifikasi Drive (sapu penuh 27 folder DE, berpaginasi) + Globemerce, 16 Okt 2026 */
+  /* Terverifikasi Drive (sapu penuh 27 folder DE, berpaginasi) + Globemerce, 16 Okt 2026.
+     17 Okt 2026: ID Fandi (FANDI1326) & Maharani (Rani1243) dari DE DENNI1259; folder Drive dicek ulang. */
   var deSE = {
     'ALDIALFIAN1205':[['Ikmal','10pfGUqNfx9o0FWej-751VuYFWZgm57QV',1,'Kemal1298'],['Nadja','1mNFFrgLuCxvUFV65ouxi2gqADVy3NNyV',1,'Nadjalaxmi1297'],['Farid Kybernanta','1NzozGkwDEWC3RvAW0v797BkZ8OYsMhK5',1,'KYBERNANTA1294'],['Humam','1bTSkN9ylGOKGKww5ys0YhYyOL9w10PzO',1,'Humam1300'],['Akhmad Saefulloh','1p9fe7l6gkgfxQ4S0fydmDUunrtEvmTcm',1,'Saefllh1318'],['Fitria','17QfBDeqVZoDP7yaESzHqCT6-SaPYOHRI',0,'FitriaPutri1296']],
     'ZAINAL1022':[['Sonya','1ntrsXVBLUQ_Qq8Df9tqJPtOw4r3dp-sn',1,'Sonya1305'],['Bayu Aditia','1cL50jhB8PTkjJv6KBdJh9t4CHeOT4_7o',1,'BayuAditia1311']],
@@ -495,7 +496,7 @@
     'SAFUAN1372':[['Edo','1Tr5ffOKRtKLdDAyUY-0zbXZHcXjz9I9l',1,'edoofr1308']],
     'MUSLI1636':[['Fadhillah Fikri','18DWgvVnhjAvutUQAlEHfB65vWe4HpoWJ',1,'FADHILFIKRI1310']],
     'FUAD1233':[['Willy Hamdani','1N3UbZpr8oHispQwQ1sFkVLuJYZLiSOcz',1,'WillyH1312']],
-    'DENNI1259':[['Bagus (Restu B. D. Santiso)','1SWNBsgGzHKOIHTa6jZcQ0ygA-o-zMtCx',1,'Restu1240'],['Soleh','1oYFYpO6yBZA2MCqYar7Uo00v4ZcLaHZI',1,'Sholeh1253'],['Fandi','1mqBY5fDA7qQdwIhDAU9zGrF-15r9S3j1',1,''],['Al Kautsar (Asa)','1ToOKKJLk4qojP6HohRpSd5I0y6ADcn-5',1,'ALKAUTSAR1329'],['Maharani','1xvQ9Zh1XP1zdSaZfRDMK_Xp4VAL4eXmZ',1,'']],
+    'DENNI1259':[['Bagus (Restu B. D. Santiso)','1SWNBsgGzHKOIHTa6jZcQ0ygA-o-zMtCx',1,'Restu1240'],['Soleh','1oYFYpO6yBZA2MCqYar7Uo00v4ZcLaHZI',1,'Sholeh1253'],['Fandi','1mqBY5fDA7qQdwIhDAU9zGrF-15r9S3j1',1,'FANDI1326'],['Al Kautsar (Asa)','1ToOKKJLk4qojP6HohRpSd5I0y6ADcn-5',1,'ALKAUTSAR1329'],['Maharani','1xvQ9Zh1XP1zdSaZfRDMK_Xp4VAL4eXmZ',1,'Rani1243']],
     'RIZAL1719':[['Tri Andini','1pdIk5HOWrFBKzU0cWdZnpf-xy8GuDa-U',1,'NOVI1303']],
     'WAHIDIN1521':[['Mitta P','1yWVZBuGNSajtPjIhW1QGT5JHv2bj_jC_',1,'']],
     'RIFAI1520':[['Febriana Eka Putri','1W_X61C5UE8wlzPLml6ei88K5hgYojHqC',1,'FebrianaEkaPutri1315']],
@@ -514,6 +515,47 @@
     var belum = deIds.length - Object.keys(deSE).length;
     var eb = document.getElementById('belumSubmit');
     if (eb) eb.innerHTML = belum + '<small> DE</small>';
+  })();
+
+  /* Semua angka rekrutmen dihitung dari deSE di atas, supaya tidak ada lagi angka tulis-tangan
+     yang tertinggal saat data SE diperbarui. Ubah TGL_VERIF setiap kali Drive/Globemerce dicek ulang. */
+  var TGL_VERIF = '17 Okt 2026';
+  (function(){
+    var kand = 0, cv = 0, id = 0, lengkap = 0, submit = 0;
+    var cvTanpaId = [], idTanpaCv = [], kosong = [];
+    Object.keys(deSE).forEach(function(de){
+      var ses = deSE[de] || [];
+      if (ses.length) submit++;
+      ses.forEach(function(s){
+        var nama = s[0].split(' (')[0] + ' (' + de + ')';
+        kand++;
+        if (s[2]) cv++;
+        if (s[3]) id++;
+        if (s[2] && s[3]) lengkap++;
+        if (s[2] && !s[3]) cvTanpaId.push(nama);
+        else if (!s[2] && s[3]) idTanpaCv.push(nama);
+        else if (!s[2] && !s[3]) kosong.push(nama);
+      });
+    });
+    var sisa = Math.max(0, 50 - id), pct = Math.round(id / 50 * 100);
+    function isi(sel, v){ document.querySelectorAll(sel).forEach(function(el){ el.textContent = v; }); }
+    isi('.nKand', kand); isi('.nCV', cv); isi('.nID', id); isi('.nLengkap', lengkap);
+    isi('.nSubmit', submit); isi('.nDE', deIds.length); isi('.nSisa', sisa); isi('.tglVerif', TGL_VERIF);
+    isi('#kId', id); isi('#kSisa', sisa); isi('#ringPct', pct + '%'); isi('#chipTgl', TGL_VERIF); isi('#footTgl', TGL_VERIF);
+    var arc = document.getElementById('ringArc');
+    if (arc) arc.setAttribute('stroke-dashoffset', (326.7 * (1 - Math.min(id, 50) / 50)).toFixed(1));
+    var b = [];
+    if (cvTanpaId.length) b.push('<b>' + cvTanpaId.join(', ') + '</b> ada CV tapi belum ID');
+    if (idTanpaCv.length) b.push('<b>' + idTanpaCv.join(', ') + '</b> sudah ID tapi CV belum');
+    if (kosong.length) b.push('<b>' + kosong.join(', ') + '</b> belum keduanya');
+    var bl = document.getElementById('belumLengkap');
+    if (bl) bl.innerHTML = b.length ? 'Belum lengkap: ' + b.join(' · ') + '.' : 'Semua kandidat sudah lengkap.';
+    var t = [];
+    if (cvTanpaId.length) t.push(cvTanpaId.join(', ') + ' (CV ✓, ID belum)');
+    if (idTanpaCv.length) t.push(idTanpaCv.join(', ') + ' (ID ✓, CV belum)');
+    if (kosong.length) t.push(kosong.join(', ') + ' (belum keduanya)');
+    var pt = document.getElementById('perluTindak');
+    if (pt) pt.textContent = t.length ? t.join(' · ') + '.' : 'tidak ada.';
   })();
 
   var deList = document.getElementById('deList');
