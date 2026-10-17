@@ -144,15 +144,15 @@
   /* SE yang BELUM ikut program subsidi pada bulan tertentu -> tidak ditampilkan di tab bulan itu.
      Dikunci per bulan kalender (YYYY-MM), bukan per posisi tab, supaya tidak ikut bergeser
      saat bulan berganti.
-     - Saefllh1318, JUSTIN1301, didaw1328: baru ikut subsidi sejak Oktober 2026. */
-  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328']};
+     - Saefllh1318, JUSTIN1301, didaw1328: baru ikut subsidi sejak Oktober 2026.
+     - ALKAUTSAR1329: atas keputusan Branch Leader (17 Okt 2026) diikutkan mulai Oktober,
+       walaupun belanja Septembernya Rp29,3 jt. */
+  var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328','ALKAUTSAR1329']};
 
   /* Aturan Branch Leader (17 Okt 2026): SE yang belanja September-nya tidak mencapai Rp10 juta
      tidak dimunculkan di September; ia dihitung ikut mulai Oktober. Berlaku otomatis untuk
      SE mana pun, termasuk SE baru yang akun iklannya baru dipetakan.
-     (Dulu FebrianaEkaPutri1315 & ALKAUTSAR1329 dikeluarkan manual. ALKAUTSAR1329 ternyata
-     terbaca Rp0 karena akunnya gagal ditarik; per 17 Okt belanja Septembernya Rp29,3 jt,
-     jadi kini tampil di September.) */
+     (FebrianaEkaPutri1315 kini tersaring oleh aturan ini, tidak perlu dicatat manual.) */
   var MIN_BELANJA={'2026-09':10000000};
 
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
