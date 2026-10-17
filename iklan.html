@@ -53,6 +53,9 @@
   .ava{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-size:12px;color:#fff;background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--brand) 55%,#000))}
   .metablk{display:flex;flex-direction:column;min-width:0;flex:1 1 auto}
   .nm{font-weight:650;font-size:14px}.nm .sub{display:block;color:var(--muted);font-weight:500;font-size:11px}
+  .nm{overflow-wrap:anywhere}.nm .bln{margin-left:8px;color:var(--ink-2);font-weight:500;font-size:12.5px}.nm .bln s{color:var(--ink-2);text-decoration-thickness:2px}
+  @media (max-width:560px){.nm .bln{display:block;margin-left:0;font-size:12px}}
+  @media (max-width:400px){.se-head{gap:10px;padding:12px}}
   .hl{display:flex;flex-direction:column;align-items:flex-end;gap:1px;white-space:nowrap}
   .hl .hk{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
   .hl .hv{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -186,6 +189,44 @@
   }
   function vid(key){return 'v-'+String(key).replace(/[^A-Za-z0-9]+/g,'-');}
 
+  /* Bulan program tiap SE = 3 bulan kalender (masa klaim), mulai bulan pertama ia jadi peserta.
+     Bulan mulai TIDAK ditulis manual: diturunkan dari aturan tab yang sudah ada, jadi selalu sama
+     dengan isi tiap tab (Agustus = peserta klaim; September = bukan LUAR_PROGRAM dan belanja >= Rp10 jt;
+     bulan lain = ada belanja). Bulan berjalan memakai syarat yang sama, supaya label tidak bergeser
+     saat bulan itu tutup. SE yang belum belanja sama sekali belum diberi label. */
+  var MASA_KLAIM=3;
+  /* Bulan yang klaimnya SUDAH diajukan -> dicoret di label SE yang ikut klaim itu.
+     Setelah klaim September diajukan, tambahkan: '2026-09':[daftar 18 SE peserta klaim September]. */
+  var KLAIM_DIAJUKAN={'2026-08':CLAIM_AGU};
+  /* Pengecualian manual bulan mulai (keputusan BL), dipakai bila aturan otomatis tidak berlaku,
+     mis. SE yang ditetapkan mulai Oktober tetapi belanja Oktobernya nol. Contoh: {'SEXXXX':'2026-10'}. */
+  var MULAI={};
+  /* 0 = bukan peserta bulan itu, 1 = peserta, 2 = belum pasti (data bulan itu gagal ditarik). */
+  function pesertaDi(a,mo){
+    var k=kunciBulan(mo);if(!k)return 0;
+    if(isBulanKlaim(mo))return CLAIM_AGU.indexOf(a.se)>-1?1:0;
+    if((LUAR_PROGRAM[k]||[]).indexOf(a.se)>-1)return 0;
+    var m=(a.periods||{})[mo.key]||{},minB=MIN_BELANJA[k]||0;
+    if(m.gagal)return 2;
+    return (m.spend||0)>=(minB||1)?1:0;
+  }
+  function blnTag(a){
+    var mulai=MULAI[a.se]||null;
+    for(var i=0;!mulai&&i<MONTHS.length;i++){
+      var p=pesertaDi(a,MONTHS[i]);
+      if(p===2)return '<span class="bln" title="data bulan '+(MONTHS[i].label||'')+' gagal ditarik, bulan mulai belum pasti">(?)</span>';
+      if(p===1)mulai=kunciBulan(MONTHS[i]);
+    }
+    if(!mulai)return '';
+    var y=+mulai.slice(0,4),mm=+mulai.slice(5,7),out=[];
+    for(var j=0;j<MASA_KLAIM;j++){
+      var k=y+'-'+('0'+mm).slice(-2),nama=NAMA_BLN[mm-1];
+      out.push((KLAIM_DIAJUKAN[k]||[]).indexOf(a.se)>-1?'<s title="sudah diklaim">'+nama+'</s>':nama);
+      mm++;if(mm>12){mm=1;y++;}
+    }
+    return '<span class="bln">('+out.join(', ')+')</span>';
+  }
+
   function renderPeriod(key){
     var mo=monthOf(key),isAgu=isBulanKlaim(mo);
     var filtered=isAgu&&AGU_CLAIM;
@@ -228,7 +269,7 @@
       var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'')+(m.gagal?' · <b style="color:var(--warn)">data gagal ditarik</b>':'');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+a.se+'<span class="sub">'+desub+'</span></span></span>'+
+        '<span class="metablk"><span class="nm">'+a.se+blnTag(a)+'<span class="sub">'+desub+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Spend</span><span class="hv">'+rpC(m.spend)+'</span></span>'+
         '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
         '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
@@ -262,7 +303,7 @@
       var rows=g.cs.map(campRow).join('');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+g.a.se+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
+        '<span class="metablk"><span class="nm">'+g.a.se+blnTag(g.a)+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
         '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
         '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+
