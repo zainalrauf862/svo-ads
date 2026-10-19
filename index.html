@@ -485,7 +485,8 @@
   };
   /* SE yang sudah disubmit tiap DE: [nama SE, folderId, adaCV(1/0), idGlobemerce('' bila belum)] */
   /* Terverifikasi Drive (sapu penuh 27 folder DE, berpaginasi) + Globemerce, 16 Okt 2026.
-     17 Okt 2026: ID Fandi (FANDI1326) & Maharani (Rani1243) dari DE DENNI1259; folder Drive dicek ulang. */
+     17 Okt 2026: ID Fandi (FANDI1326) & Maharani (Rani1243) dari DE DENNI1259; folder Drive dicek ulang.
+     19 Okt 2026: ID Jessy (Jessy1333) dari DE DAUS1615; CV & portofolio ada langsung di folder DE. */
   var deSE = {
     'ALDIALFIAN1205':[['Ikmal','10pfGUqNfx9o0FWej-751VuYFWZgm57QV',1,'Kemal1298'],['Nadja','1mNFFrgLuCxvUFV65ouxi2gqADVy3NNyV',1,'Nadjalaxmi1297'],['Farid Kybernanta','1NzozGkwDEWC3RvAW0v797BkZ8OYsMhK5',1,'KYBERNANTA1294'],['Humam','1bTSkN9ylGOKGKww5ys0YhYyOL9w10PzO',1,'Humam1300'],['Akhmad Saefulloh','1p9fe7l6gkgfxQ4S0fydmDUunrtEvmTcm',1,'Saefllh1318'],['Fitria','17QfBDeqVZoDP7yaESzHqCT6-SaPYOHRI',0,'FitriaPutri1296']],
     'ZAINAL1022':[['Sonya','1ntrsXVBLUQ_Qq8Df9tqJPtOw4r3dp-sn',1,'Sonya1305'],['Bayu Aditia','1cL50jhB8PTkjJv6KBdJh9t4CHeOT4_7o',1,'BayuAditia1311']],
@@ -501,7 +502,7 @@
     'WAHIDIN1521':[['Mitta P','1yWVZBuGNSajtPjIhW1QGT5JHv2bj_jC_',1,'']],
     'RIFAI1520':[['Febriana Eka Putri','1W_X61C5UE8wlzPLml6ei88K5hgYojHqC',1,'FebrianaEkaPutri1315']],
     'RIOARRIDHO1204':[['Dyah Annisa L','1KY7cR6EjC41vm0nQomTrogICtsYm8VBa',1,'SYFA1316']],
-    'DAUS1615':[['Jessy Ayu Rahardin Al Fath','13D4Xsg7NuaFzdz8CtqlpYi35gkgU8v1L',1,'']],
+    'DAUS1615':[['Jessy Ayu Rahardian Al Fath','13D4Xsg7NuaFzdz8CtqlpYi35gkgU8v1L',1,'Jessy1333']],
     'RENALDO1368':[['Bayu','1h4HIfiRn_WnSGbXTkGgVR74ecnCJzOn7',0,'']]
   };
   /* Dua angka ini dulu ditulis tetap di HTML dan sempat basi berminggu-minggu
@@ -519,7 +520,7 @@
 
   /* Semua angka rekrutmen dihitung dari deSE di atas, supaya tidak ada lagi angka tulis-tangan
      yang tertinggal saat data SE diperbarui. Ubah TGL_VERIF setiap kali Drive/Globemerce dicek ulang. */
-  var TGL_VERIF = '17 Okt 2026';
+  var TGL_VERIF = '19 Okt 2026';
   (function(){
     var kand = 0, cv = 0, id = 0, lengkap = 0, submit = 0;
     var cvTanpaId = [], idTanpaCv = [], kosong = [];
