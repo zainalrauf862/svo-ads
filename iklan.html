@@ -151,9 +151,12 @@
      - ALKAUTSAR1329: atas keputusan Branch Leader (17 Okt 2026) diikutkan mulai Oktober,
        walaupun belanja Septembernya Rp29,3 jt.
      - abdurguns1284, Melati1332, AYUMI1336, Rekatiyas1334: ditambahkan 19 Okt 2026, ikut mulai Oktober.
-     - Mitta1319 (Mitta Paranesti, DE Wahidin): ditambahkan 19 Okt 2026 bersama kelompok di atas, ikut mulai Oktober. */
+     - Mitta1319 (Mitta Paranesti, DE Wahidin): ditambahkan 19 Okt 2026 bersama kelompok di atas, ikut mulai Oktober.
+     - edoofr1308 (Edo, DE Safuan), Jack1335 (Mokhammad Aunurrofiq, DE Aqli), Jenita1321 (DE Hendri):
+       ditambahkan 27 Okt 2026, ikut mulai Oktober (keputusan BL). */
   var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328','ALKAUTSAR1329',
-                              'abdurguns1284','Melati1332','AYUMI1336','Rekatiyas1334','Mitta1319']};
+                              'abdurguns1284','Melati1332','AYUMI1336','Rekatiyas1334','Mitta1319',
+                              'edoofr1308','Jack1335','Jenita1321']};
 
   /* Aturan Branch Leader (17 Okt 2026): SE yang belanja September-nya tidak mencapai Rp10 juta
      tidak dimunculkan di September; ia dihitung ikut mulai Oktober. Berlaku otomatis untuk
@@ -203,7 +206,8 @@
   var KLAIM_DIAJUKAN={'2026-08':CLAIM_AGU};
   /* Pengecualian manual bulan mulai (keputusan BL), dipakai bila aturan otomatis tidak berlaku,
      mis. SE yang ditetapkan mulai Oktober tetapi belanja Oktobernya nol. Contoh: {'SEXXXX':'2026-10'}. */
-  var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10'};
+  var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10',
+             'edoofr1308':'2026-10','Jack1335':'2026-10','Jenita1321':'2026-10'};
   /* 0 = bukan peserta bulan itu, 1 = peserta, 2 = belum pasti (data bulan itu gagal ditarik). */
   function pesertaDi(a,mo){
     var k=kunciBulan(mo);if(!k)return 0;
