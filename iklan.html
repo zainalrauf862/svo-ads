@@ -202,8 +202,10 @@
      saat bulan itu tutup. SE yang belum belanja sama sekali belum diberi label. */
   var MASA_KLAIM=3;
   /* Bulan yang klaimnya SUDAH diajukan -> dicoret di label SE yang ikut klaim itu.
-     Setelah klaim September diajukan, tambahkan: '2026-09':[daftar 18 SE peserta klaim September]. */
-  var KLAIM_DIAJUKAN={'2026-08':CLAIM_AGU};
+     Peserta klaim September = 18 SE di berkas "Klaim September 2026" (manifest.json), email terkirim (konfirmasi BL 27 Okt 2026).
+     Setelah klaim Oktober diajukan, tambahkan '2026-10' dengan cara yang sama. */
+  var CLAIM_SEP=['Nadjalaxmi1297','Humam1300','Ikmal1298','Sholeh1253','FitriaPutri1296','Kybernanta1294','Fajarrizki1286','Restu1240','syarif1309','Syahri1304','NOVI1303','amirulamallubis1299','Sonya1305','WillyH1312','BayuAditia1311','Dyah Annisa L','FADHILFIKRI1310','NABILA1317'];
+  var KLAIM_DIAJUKAN={'2026-08':CLAIM_AGU,'2026-09':CLAIM_SEP};
   /* Pengecualian manual bulan mulai (keputusan BL), dipakai bila aturan otomatis tidak berlaku,
      mis. SE yang ditetapkan mulai Oktober tetapi belanja Oktobernya nol. Contoh: {'SEXXXX':'2026-10'}. */
   var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10',
