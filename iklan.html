@@ -55,6 +55,12 @@
   .nm{font-weight:650;font-size:14px}.nm .sub{display:block;color:var(--muted);font-weight:500;font-size:11px}
   .nm{overflow-wrap:anywhere}.nm .bln{margin-left:8px;color:var(--ink-2);font-weight:500;font-size:12.5px}.nm .bln s{color:var(--ink-2);text-decoration-thickness:2px}
   @media (max-width:560px){.nm .bln{display:block;margin-left:0;font-size:12px}}
+  /* Label kantor asal SE (kantor.json). k0/k1/k2 = urutan di daftar "kantor"; tanpa kelas = kantor ke-4 dst; kx = belum dicatat. */
+  .nm .ktr{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:650;line-height:1.5;vertical-align:1px;white-space:nowrap;background:var(--surface-2);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--hairline)}
+  .nm .ktr.k0{background:var(--brand-soft);color:var(--brand-ink);box-shadow:none}
+  .nm .ktr.k1{background:color-mix(in srgb,var(--p-novia) 14%,transparent);color:color-mix(in srgb,var(--p-novia) 72%,var(--ink));box-shadow:none}
+  .nm .ktr.k2{background:color-mix(in srgb,var(--p-dvn) 15%,transparent);color:color-mix(in srgb,var(--p-dvn) 68%,var(--ink));box-shadow:none}
+  .nm .ktr.kx{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--border)}
   @media (max-width:400px){.se-head{gap:10px;padding:12px}}
   .hl{display:flex;flex-direction:column;align-items:flex-end;gap:1px;white-space:nowrap}
   .hl .hk{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
@@ -210,6 +216,17 @@
      mis. SE yang ditetapkan mulai Oktober tetapi belanja Oktobernya nol. Contoh: {'SEXXXX':'2026-10'}. */
   var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10',
              'edoofr1308':'2026-10','Jack1335':'2026-10','Jenita1321':'2026-10'};
+  /* Kantor asal tiap SE (permintaan manajemen 29 Okt 2026), dibaca dari kantor.json: satu sumber untuk
+     halaman ini dan tabel performa di halaman rekrutmen. SE yang belum tercatat diberi label "kantor ?".
+     Bila kantor.json gagal dimuat, label kantor tidak ditampilkan sama sekali. */
+  var KANTOR=null;
+  function ktrTag(a){
+    if(!KANTOR)return '';
+    var k=KANTOR.se[a.se],i=(KANTOR.kantor||[]).indexOf(k);
+    /* Diawali spasi biasa: saat label turun baris di layar HP, spasinya hilang sehingga label rata kiri. */
+    return k?' <span class="ktr'+(i>-1&&i<3?' k'+i:'')+'" title="Kantor '+k+'">'+k+'</span>'
+            :' <span class="ktr kx" title="Kantor SE ini belum dicatat di kantor.json">kantor ?</span>';
+  }
   /* 0 = bukan peserta bulan itu, 1 = peserta, 2 = belum pasti (data bulan itu gagal ditarik). */
   function pesertaDi(a,mo){
     var k=kunciBulan(mo);if(!k)return 0;
@@ -278,7 +295,7 @@
       var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'')+(m.gagal?' · <b style="color:var(--warn)">data gagal ditarik</b>':'');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+a.se+blnTag(a)+'<span class="sub">'+desub+'</span></span></span>'+
+        '<span class="metablk"><span class="nm">'+a.se+ktrTag(a)+blnTag(a)+'<span class="sub">'+desub+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Spend</span><span class="hv">'+rpC(m.spend)+'</span></span>'+
         '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
         '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
@@ -312,7 +329,7 @@
       var rows=g.cs.map(campRow).join('');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
         '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+g.a.se+blnTag(g.a)+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
+        '<span class="metablk"><span class="nm">'+g.a.se+ktrTag(g.a)+blnTag(g.a)+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
         '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
         '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+
@@ -368,7 +385,9 @@
     document.getElementById('updated').textContent='Gagal memuat data.';
     document.getElementById('v-harian').innerHTML='<div class="state"><h4>Data belum tersedia</h4><p>'+msg+'</p></div>';
   }
-  fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){DATA=d||DATA;boot();}).catch(function(){fail('File data.json belum ada / skrip fetch.py belum jalan di server. Coba jalankan: python3 /opt/svo-ads/fetch.py');});
+  /* kantor.json dimuat bersamaan; tidak pernah menggagalkan halaman (gagal -> tanpa label kantor). */
+  var kantorSiap=fetch('kantor.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(k){if(k&&k.se)KANTOR=k;}).catch(function(){});
+  fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){DATA=d||DATA;return kantorSiap;}).then(function(){boot();}).catch(function(){fail('File data.json belum ada / skrip fetch.py belum jalan di server. Coba jalankan: python3 /opt/svo-ads/fetch.py');});
 
   document.addEventListener('click',function(e){
     var g=e.target.closest('[data-agu]');
