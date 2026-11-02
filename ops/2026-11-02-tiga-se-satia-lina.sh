@@ -3,8 +3,8 @@
 # (DE Satia, kantor Kaliurang), J1252 Ade Saputra Mulyono (DE Lina Mahfiroh, kantor Wonosobo); produk Novia.
 # Ubaidillah (sulthon1287) hanya di halaman rekrutmen — akun iklannya ditunda (ID yang dikirim adalah akun Fajarrizki1286).
 # Langkah 1 juga menjawab: berapa belanja Oktober tiap akun dan apakah >= Rp10 jt (>= 10 jt ikut Oktober, kurang -> mulai November).
-# Sumber html/kantor.json dikunci ke commit ee5e4b7748a108611e3e95d117ee27592ec6e91e. Token tidak pernah dicetak.
-R=https://raw.githubusercontent.com/zainalrauf862/svo-ads/ee5e4b7748a108611e3e95d117ee27592ec6e91e
+# Sumber html/kantor.json dikunci ke commit 628d16b85fa286109e9636d257c9cdf711cc7b39. Token tidak pernah dicetak.
+R=https://raw.githubusercontent.com/zainalrauf862/svo-ads/628d16b85fa286109e9636d257c9cdf711cc7b39
 W=/var/www/tim; O=/opt/svo-ads
 trap 'rm -f "$W/.kantor.json.new" "$W/.index.html.new" "$W/.iklan.html.new"' EXIT
 trap 'echo "   DIBATALKAN (Ctrl+C) — langkah berikutnya tidak dijalankan."; exit 130' HUP INT TERM
@@ -50,7 +50,7 @@ ambil() { # $1 file, $2 penanda wajib
 }
 if curl -fsSL --retry 3 "$R/kantor.json" -o "$W/.kantor.json.new" \
    && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert len(d["se"])==44 and d["se"]["J1252"]=="Wonosobo" and d["nama"]["J1346"]=="Hafid Yoga Panuntun"' "$W/.kantor.json.new" \
-   && ambil index.html "LINAMAHFIROH1474':\[\['Ade Saputra" && ambil iklan.html "function mulaiDariAturan"; then
+   && ambil index.html "LINAMAHFIROH1474':\[\['Ade Saputra" && ambil iklan.html "||mulaiDariAturan(a)||null"; then
   for f in kantor.json index.html iklan.html; do
     { chmod 644 "$W/.$f.new" && mv -f "$W/.$f.new" "$W/$f" && echo "   OK: $f terpasang"; } || { echo "   GAGAL memasang $f. Berhenti."; exit 1; }
   done
