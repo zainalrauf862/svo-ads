@@ -164,22 +164,27 @@
        J1345 (Daru Sosetyoning Pamuncak), DE Rizal: akun iklan masuk BM 29 Okt, ditambahkan 2 Nov 2026.
      - J1313 (Bagus Kresna Djatmiko, DE Dayat) & J1324 (Bayu Rahmanto, DE Renaldo): akun iklan masuk BM 2 Nov,
        ditambahkan 2 Nov 2026 dengan aturan yang sama.
+     - J1347 (Hakam Umam Thoriq) & J1346 (Hafid Yoga Panuntun), DE Satia; J1252 (Ade Saputra Mulyono, DE Lina Mahfiroh):
+       akun iklan masuk BM 2 Nov, aturan yang sama. sulthon1287 (Ubaidillah Sulthon, DE Apdina) sudah dicatat dengan aturan
+       yang sama, tetapi akun iklannya ditunda: ID yang dikirim (985351379791461) ternyata akun Fajarrizki1286.
        Mulai Oktober atau November ditentukan MIN_BELANJA_SE di bawah. */
   var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328','ALKAUTSAR1329',
                               'abdurguns1284','Melati1332','AYUMI1336','Rekatiyas1334','Mitta1319',
                               'edoofr1308','Jack1335','Jenita1321',
-                              'J1342','J1343','J1285','J1345','J1313','J1324']};
+                              'J1342','J1343','J1285','J1345','J1313','J1324',
+                              'J1347','J1346','J1252','sulthon1287']};
 
   /* Aturan Branch Leader (17 Okt 2026): SE yang belanja September-nya tidak mencapai Rp10 juta
      tidak dimunculkan di September; ia dihitung ikut mulai Oktober. Berlaku otomatis untuk
      SE mana pun, termasuk SE baru yang akun iklannya baru dipetakan.
      (FebrianaEkaPutri1315 kini tersaring oleh aturan ini, tidak perlu dicatat manual.) */
   var MIN_BELANJA={'2026-09':10000000};
-  /* Batas yang sama, tetapi hanya untuk SE tertentu. Keputusan BL 2 Nov 2026: 6 SE baru (J1342, J1343, J1285,
-     J1345, J1313, J1324) ikut Oktober hanya bila belanja Oktobernya >= Rp10 jt; kalau kurang, ikut mulai November.
+  /* Batas yang sama, tetapi hanya untuk SE tertentu. Keputusan BL 2 Nov 2026: SE baru (J1342, J1343, J1285,
+     J1345, J1313, J1324, J1347, J1346, J1252, sulthon1287) ikut Oktober hanya bila belanja Oktobernya >= Rp10 jt; kalau kurang, ikut mulai November.
      SE lama di Oktober tidak terkena (tetap: asal ada belanja). */
   var MIN_BELANJA_SE={'2026-10':{'J1342':10000000,'J1343':10000000,'J1285':10000000,'J1345':10000000,
-                                  'J1313':10000000,'J1324':10000000}};
+                                  'J1313':10000000,'J1324':10000000,'J1347':10000000,'J1346':10000000,
+                                  'J1252':10000000,'sulthon1287':10000000}};
   function minBelanja(a,k){return Math.max(MIN_BELANJA[k]||0,(MIN_BELANJA_SE[k]||{})[a.se]||0);}
 
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
@@ -254,6 +259,19 @@
     if(m.gagal)return 2;
     return (m.spend||0)>=(minB||1)?1:0;
   }
+  /* SE di MIN_BELANJA_SE yang bulannya sudah tutup dengan belanja di bawah batas: sesuai keputusan BL ia ikut mulai
+     bulan berikutnya, jadi labelnya tampil walau belum belanja sama sekali (tidak perlu dicatat satu-satu di MULAI). */
+  function mulaiDariAturan(a){
+    for(var k in MIN_BELANJA_SE){
+      var mb=MIN_BELANJA_SE[k][a.se],mo=MONTHS.filter(function(x){return kunciBulan(x)===k;})[0];
+      if(!mb||!mo||mo.current)continue;
+      var m=(a.periods||{})[mo.key]||{};
+      if(m.gagal||(m.spend||0)>=mb)continue;
+      var y=+k.slice(0,4),mm=+k.slice(5,7)+1;if(mm>12){mm=1;y++;}
+      return y+'-'+('0'+mm).slice(-2);
+    }
+    return null;
+  }
   function blnTag(a){
     var mulai=MULAI[a.se]||null;
     for(var i=0;!mulai&&i<MONTHS.length;i++){
@@ -261,6 +279,7 @@
       if(p===2)return '<span class="bln" title="data bulan '+(MONTHS[i].label||'')+' gagal ditarik, bulan mulai belum pasti">(?)</span>';
       if(p===1)mulai=kunciBulan(MONTHS[i]);
     }
+    if(!mulai)mulai=mulaiDariAturan(a);
     if(!mulai)return '';
     var y=+mulai.slice(0,4),mm=+mulai.slice(5,7),out=[];
     for(var j=0;j<MASA_KLAIM;j++){
@@ -277,8 +296,9 @@
     var kb=mo&&kunciBulan(mo);
     var luar=(kb&&LUAR_PROGRAM[kb])||[];
     var src=(DATA.accounts||[]);
+    var nLuar=0; /* dihitung dari akun yang benar-benar ada (SE di LUAR_PROGRAM bisa belum punya akun iklan) */
     if(filtered) src=src.filter(function(a){return CLAIM_AGU.indexOf(a.se)>-1;});
-    else if(luar.length) src=src.filter(function(a){return luar.indexOf(a.se)<0;});
+    else if(luar.length){var s0=src.length;src=src.filter(function(a){return luar.indexOf(a.se)<0;});nLuar=s0-src.length;}
     var list=src.map(function(a){return {a:a,m:der((a.periods||{})[key])};}).sort(function(x,y){return y.m.spend-x.m.spend;});
     var nKecil=0,minKecil=0;
     /* SE yang datanya gagal ditarik (m.gagal) TIDAK disaring: angka nolnya bukan belanja kecil. */
@@ -295,7 +315,7 @@
       TT='Bulan '+labelBulan(mo);
       sub=(mo.current?'Tanggal 1 s/d hari ini':'Sebulan penuh')+' ('+(mo.label||'')+') · '+
           (filtered?('hanya '+list.length+' SE peserta klaim'):(list.length+' SE, '+aktif+' ada spend'))+
-          (luar.length&&!filtered?' · '+luar.length+' SE belum ikut program bulan ini, tidak dihitung':'')+
+          (nLuar?' · '+nLuar+' SE belum ikut program bulan ini, tidak dihitung':'')+
           (nKecil?' · '+nKecil+' SE belanja di bawah Rp'+(minKecil/1e6)+' jt, ikut mulai bulan berikutnya':'')+
           (nGagal?' · <b style="color:var(--warn)">'+nGagal+' SE datanya gagal ditarik, angkanya belum lengkap</b>':'');
     }else{

@@ -1,5 +1,5 @@
 {
-  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026 (J1342, J1343, J1285, J1345, J1313, J1324 ditambahkan 2 Nov 2026). Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label. Bagian \"nama\": nama tampilan untuk SE yang kuncinya masih User ID (J####) karena username Globemerce-nya belum diketahui (2 Nov 2026).",
+  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026 (J1342, J1343, J1285, J1345, J1313, J1324, sulthon1287, J1347, J1346, J1252 ditambahkan 2 Nov 2026). Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label. Bagian \"nama\": nama tampilan untuk SE yang kuncinya masih User ID (J####) karena username Globemerce-nya belum diketahui (2 Nov 2026).",
   "kantor": ["Kaliurang", "Wonosobo", "Umbulharjo"],
   "se": {
     "Ikmal1298": "Kaliurang",
@@ -24,6 +24,8 @@
     "edoofr1308": "Kaliurang",
     "Jack1335": "Kaliurang",
     "J1313": "Kaliurang",
+    "J1347": "Kaliurang",
+    "J1346": "Kaliurang",
     "Restu1240": "Wonosobo",
     "Sholeh1253": "Wonosobo",
     "ALKAUTSAR1329": "Wonosobo",
@@ -36,6 +38,8 @@
     "J1343": "Wonosobo",
     "J1285": "Wonosobo",
     "J1345": "Wonosobo",
+    "sulthon1287": "Wonosobo",
+    "J1252": "Wonosobo",
     "Dyah Annisa L": "Umbulharjo",
     "FebrianaEkaPutri1315": "Umbulharjo",
     "Jessy1333": "Umbulharjo",
@@ -49,6 +53,9 @@
     "J1285": "Indra Sukmana",
     "J1345": "Daru Sosetyoning Pamuncak",
     "J1313": "Bagus Kresna Djatmiko",
-    "J1324": "Bayu Rahmanto"
+    "J1324": "Bayu Rahmanto",
+    "J1347": "Hakam Umam Thoriq",
+    "J1346": "Hafid Yoga Panuntun",
+    "J1252": "Ade Saputra Mulyono"
   }
 }
