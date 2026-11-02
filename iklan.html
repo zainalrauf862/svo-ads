@@ -162,21 +162,24 @@
        ditambahkan 27 Okt 2026, ikut mulai Oktober (keputusan BL).
      - J1342 (Tri Putra Satria Jati) & J1343 (Aditya Alfian Darmawan), DE Andi Kurniawan; J1285 (Indra Sukmana) &
        J1345 (Daru Sosetyoning Pamuncak), DE Rizal: akun iklan masuk BM 29 Okt, ditambahkan 2 Nov 2026.
+     - J1313 (Bagus Kresna Djatmiko, DE Dayat) & J1324 (Bayu Rahmanto, DE Renaldo): akun iklan masuk BM 2 Nov,
+       ditambahkan 2 Nov 2026 dengan aturan yang sama.
        Mulai Oktober atau November ditentukan MIN_BELANJA_SE di bawah. */
   var LUAR_PROGRAM={'2026-09':['Saefllh1318','JUSTIN1301','didaw1328','ALKAUTSAR1329',
                               'abdurguns1284','Melati1332','AYUMI1336','Rekatiyas1334','Mitta1319',
                               'edoofr1308','Jack1335','Jenita1321',
-                              'J1342','J1343','J1285','J1345']};
+                              'J1342','J1343','J1285','J1345','J1313','J1324']};
 
   /* Aturan Branch Leader (17 Okt 2026): SE yang belanja September-nya tidak mencapai Rp10 juta
      tidak dimunculkan di September; ia dihitung ikut mulai Oktober. Berlaku otomatis untuk
      SE mana pun, termasuk SE baru yang akun iklannya baru dipetakan.
      (FebrianaEkaPutri1315 kini tersaring oleh aturan ini, tidak perlu dicatat manual.) */
   var MIN_BELANJA={'2026-09':10000000};
-  /* Batas yang sama, tetapi hanya untuk SE tertentu. Keputusan BL 2 Nov 2026: 4 SE baru (J1342, J1343, J1285,
-     J1345) ikut Oktober hanya bila belanja Oktobernya >= Rp10 jt; kalau kurang, ikut mulai November.
+  /* Batas yang sama, tetapi hanya untuk SE tertentu. Keputusan BL 2 Nov 2026: 6 SE baru (J1342, J1343, J1285,
+     J1345, J1313, J1324) ikut Oktober hanya bila belanja Oktobernya >= Rp10 jt; kalau kurang, ikut mulai November.
      SE lama di Oktober tidak terkena (tetap: asal ada belanja). */
-  var MIN_BELANJA_SE={'2026-10':{'J1342':10000000,'J1343':10000000,'J1285':10000000,'J1345':10000000}};
+  var MIN_BELANJA_SE={'2026-10':{'J1342':10000000,'J1343':10000000,'J1285':10000000,'J1345':10000000,
+                                  'J1313':10000000,'J1324':10000000}};
   function minBelanja(a,k){return Math.max(MIN_BELANJA[k]||0,(MIN_BELANJA_SE[k]||{})[a.se]||0);}
 
   /* Daftar bulan dari data.json. Fallback ke skema lama bila server belum di-update. */
