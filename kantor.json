@@ -1,5 +1,5 @@
 {
-  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026. Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label.",
+  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026 (J1342, J1343, J1285, J1345 ditambahkan 2 Nov 2026). Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label.",
   "kantor": ["Kaliurang", "Wonosobo", "Umbulharjo"],
   "se": {
     "Ikmal1298": "Kaliurang",
@@ -31,6 +31,10 @@
     "Fajarrizki1286": "Wonosobo",
     "abdurguns1284": "Wonosobo",
     "NOVI1303": "Wonosobo",
+    "J1342": "Wonosobo",
+    "J1343": "Wonosobo",
+    "J1285": "Wonosobo",
+    "J1345": "Wonosobo",
     "Dyah Annisa L": "Umbulharjo",
     "FebrianaEkaPutri1315": "Umbulharjo",
     "Jessy1333": "Umbulharjo",
