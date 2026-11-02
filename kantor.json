@@ -1,5 +1,5 @@
 {
-  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026 (J1342, J1343, J1285, J1345 ditambahkan 2 Nov 2026). Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label.",
+  "catatan": "Kantor asal tiap SE, dijawab Branch Leader satu per satu pada 29 Okt 2026 (J1342, J1343, J1285, J1345 ditambahkan 2 Nov 2026). Kunci = nama SE persis seperti di accounts.json. SE baru: tambahkan satu baris; urutan daftar kantor menentukan warna label. Bagian \"nama\": nama tampilan untuk SE yang kuncinya masih User ID (J####) karena username Globemerce-nya belum diketahui (2 Nov 2026).",
   "kantor": ["Kaliurang", "Wonosobo", "Umbulharjo"],
   "se": {
     "Ikmal1298": "Kaliurang",
@@ -40,5 +40,11 @@
     "Jessy1333": "Umbulharjo",
     "Mitta1319": "Umbulharjo",
     "Jenita1321": "Umbulharjo"
+  },
+  "nama": {
+    "J1342": "Tri Putra Satria Jati",
+    "J1343": "Aditya Alfian Darmawan",
+    "J1285": "Indra Sukmana",
+    "J1345": "Daru Sosetyoning Pamuncak"
   }
 }

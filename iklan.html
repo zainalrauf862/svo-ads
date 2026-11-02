@@ -229,6 +229,10 @@
      halaman ini dan tabel performa di halaman rekrutmen. SE yang belum tercatat diberi label "kantor ?".
      Bila kantor.json gagal dimuat, label kantor tidak ditampilkan sama sekali. */
   var KANTOR=null;
+  /* Nama tampilan: SE yang kuncinya masih User ID (J####, username Globemerce belum diketahui) tampil dengan
+     nama lengkapnya dari kantor.json bagian "nama", dan ID-nya ditulis di baris kecil. SE lain tetap username. */
+  function namaSE(a){return (KANTOR&&KANTOR.nama&&KANTOR.nama[a.se])||a.se;}
+  function idKecil(a){return namaSE(a)!==a.se?'ID '+a.se+' · ':'';}
   function ktrTag(a){
     if(!KANTOR)return '';
     var k=KANTOR.se[a.se],i=(KANTOR.kantor||[]).indexOf(k);
@@ -305,8 +309,8 @@
     var items=list.map(function(x,i){
       var a=x.a,m=x.m,desub='DE Sponsor: '+(a.de||'—')+(a.produk?' · '+a.produk:'')+(m.gagal?' · <b style="color:var(--warn)">data gagal ditarik</b>':'');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
-        '<span class="ava">'+(a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+a.se+ktrTag(a)+blnTag(a)+'<span class="sub">'+desub+'</span></span></span>'+
+        '<span class="ava">'+(namaSE(a)||'?').slice(0,2).toUpperCase()+'</span>'+
+        '<span class="metablk"><span class="nm">'+namaSE(a)+ktrTag(a)+blnTag(a)+'<span class="sub">'+idKecil(a)+desub+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Spend</span><span class="hv">'+rpC(m.spend)+'</span></span>'+
         '<span class="hl"><span class="hk">ROAS</span><span class="hv">'+dec(m.roas,2)+'× <span class="roasdot '+roasCls(m.roas)+'"></span></span></span>'+
         '<span class="caret">▼</span></button><div class="se-body">'+funnel(m)+'</div></div>';
@@ -334,13 +338,13 @@
       kpi('var(--good)','Campaign Hari Ini',totC,'di '+groups.length+' SE')+
       kpi('var(--brand)','Spend Hari Ini',rpC(totS),'dari campaign tsb')+
       kpi('var(--p-erojan)','Purchase Hari Ini',totO+'<small> order</small>',rpC(totV))+
-      kpi('var(--warn)','Terbanyak',most?most.cs.length+'<small> campaign</small>':'—',most?'oleh '+most.a.se:'')+'</div>';
+      kpi('var(--warn)','Terbanyak',most?most.cs.length+'<small> campaign</small>':'—',most?'oleh '+namaSE(most.a):'')+'</div>';
     if(!groups.length) return head+kpis+'<div class="state"><h4>Belum ada campaign aktif hari ini</h4><p>Belum ada campaign yang spend atau aktif hari ini di akun mana pun.</p></div>';
     var items=groups.map(function(g,i){
       var rows=g.cs.map(campRow).join('');
       return '<div class="se-item'+(i===0?' open':'')+'"><button class="se-head" aria-expanded="'+(i===0?'true':'false')+'">'+
-        '<span class="ava">'+(g.a.se||'?').slice(0,2).toUpperCase()+'</span>'+
-        '<span class="metablk"><span class="nm">'+g.a.se+ktrTag(g.a)+blnTag(g.a)+'<span class="sub">DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
+        '<span class="ava">'+(namaSE(g.a)||'?').slice(0,2).toUpperCase()+'</span>'+
+        '<span class="metablk"><span class="nm">'+namaSE(g.a)+ktrTag(g.a)+blnTag(g.a)+'<span class="sub">'+idKecil(g.a)+'DE Sponsor: '+(g.a.de||'—')+(g.a.produk?' · '+g.a.produk:'')+'</span></span></span>'+
         '<span class="hl spend"><span class="hk">Campaign</span><span class="hv">'+g.cs.length+'</span></span>'+
         '<span class="hl"><span class="hk">Spend</span><span class="hv">'+rpC(g.total)+'</span></span>'+
         '<span class="caret">▼</span></button><div class="se-body"><div class="tbl-wrap"><table style="min-width:1080px">'+

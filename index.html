@@ -651,6 +651,8 @@
     var g=function(id){return document.getElementById(id);};
     /* Kantor asal SE dari kantor.json (sumber yang sama dengan dashboard iklan). Gagal dimuat -> kolom Kantor tidak ditampilkan. */
     var K=null;
+    /* Nama tampilan untuk SE yang kuncinya masih User ID (J####): dari kantor.json bagian "nama". */
+    function namaSE(se){return (K&&K.nama&&K.nama[se])||se;}
     function ktrCell(se){
       var k=K.se[se],i=(K.kantor||[]).indexOf(k);
       return k?'<span class="pill'+(i>-1&&i<3?' pill-k'+i:' pill-mute')+'">'+k+'</span>'
@@ -675,7 +677,7 @@
         var dot=PC[x.produk]||'var(--muted)';
         var free=x.f?('<b>'+x.f+'</b>'):'<span style="color:var(--muted)">0</span>';
         return '<tr>'+
-          '<td data-l="Sales Expert"><b>'+x.se+'</b></td>'+
+          '<td data-l="Sales Expert"><b>'+namaSE(x.se)+'</b>'+(namaSE(x.se)!==x.se?'<small style="color:var(--muted)"> · '+x.se+'</small>':'')+'</td>'+
           (K?'<td data-l="Kantor">'+ktrCell(x.se)+'</td>':'')+
           '<td data-l="DE Sponsor" style="white-space:nowrap">DE '+(x.de||'—')+'</td>'+
           '<td data-l="Produk"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+dot+'"></span>'+(x.produk||'—')+'</span></td>'+
