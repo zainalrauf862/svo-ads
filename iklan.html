@@ -227,7 +227,9 @@
   /* Pengecualian manual bulan mulai (keputusan BL), dipakai bila aturan otomatis tidak berlaku,
      mis. SE yang ditetapkan mulai Oktober tetapi belanja Oktobernya nol. Contoh: {'SEXXXX':'2026-10'}. */
   var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10',
-             'edoofr1308':'2026-10','Jack1335':'2026-10','Jenita1321':'2026-10'};
+             'edoofr1308':'2026-10','Jack1335':'2026-10','Jenita1321':'2026-10',
+             /* 2 Nov 2026: belanja Oktober Rp0 (sudah final) -> mulai November sesuai keputusan BL, label tampil walau belum belanja. */
+             'J1342':'2026-11','J1343':'2026-11','J1285':'2026-11','J1345':'2026-11'};
   /* Kantor asal tiap SE (permintaan manajemen 29 Okt 2026), dibaca dari kantor.json: satu sumber untuk
      halaman ini dan tabel performa di halaman rekrutmen. SE yang belum tercatat diberi label "kantor ?".
      Bila kantor.json gagal dimuat, label kantor tidak ditampilkan sama sekali. */
