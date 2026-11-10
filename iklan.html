@@ -183,7 +183,7 @@
      J1345, J1313, J1324, J1347, J1346, J1252, sulthon1287) ikut Oktober hanya bila belanja Oktobernya >= Rp10 jt; kalau kurang, ikut mulai November.
      SE lama di Oktober tidak terkena (tetap: asal ada belanja). */
   var MIN_BELANJA_SE={'2026-10':{'J1342':10000000,'J1343':10000000,'J1285':10000000,'J1345':10000000,
-                                  'J1313':10000000,'J1324':10000000,'J1347':10000000,'J1346':10000000,
+                                  'J1313':10000000,'J1347':10000000,'J1346':10000000,
                                   'J1252':10000000,'sulthon1287':10000000}};
   function minBelanja(a,k){return Math.max(MIN_BELANJA[k]||0,(MIN_BELANJA_SE[k]||{})[a.se]||0);}
 
@@ -234,7 +234,10 @@
   var MULAI={'abdurguns1284':'2026-10','Melati1332':'2026-10','AYUMI1336':'2026-10','Rekatiyas1334':'2026-10','Mitta1319':'2026-10',
              'edoofr1308':'2026-10','Jack1335':'2026-10','Jenita1321':'2026-10',
              /* 2 Nov 2026: belanja Oktober Rp0 (sudah final) -> mulai November sesuai keputusan BL, label tampil walau belum belanja. */
-             'J1342':'2026-11','J1343':'2026-11','J1285':'2026-11','J1345':'2026-11'};
+             'J1342':'2026-11','J1343':'2026-11','J1285':'2026-11','J1345':'2026-11',
+             /* 10 Nov 2026: J1324 Bayu Rahmanto ikut klaim Oktober — Meta Rp9.564.647 + Google Ads Rp1.143.011 = Rp10.707.658
+                (keputusan BL; bukti Google dari DE Renaldo). Karena itu dikeluarkan dari MIN_BELANJA_SE dan mulai Oktober. */
+             'J1324':'2026-10'};
   /* Kantor asal tiap SE (permintaan manajemen 29 Okt 2026), dibaca dari kantor.json: satu sumber untuk
      halaman ini dan tabel performa di halaman rekrutmen. SE yang belum tercatat diberi label "kantor ?".
      Bila kantor.json gagal dimuat, label kantor tidak ditampilkan sama sekali. */
